@@ -1,13 +1,22 @@
 import Icon1 from "react-native-vector-icons/MaterialIcons";
+import Icon2 from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 import axios from "axios";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const index = () => {
   const [accessToken, setAccessToken] = useState("");
@@ -22,6 +31,9 @@ const index = () => {
 
   const [date, setDate] = useState(new Date());
   const [jurnal, setJurnal] = useState([]);
+  const [isReload, setIsReload] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +56,8 @@ const index = () => {
       const fetchUpdated_at = await AsyncStorage.getItem("updated_at");
       setUpdated_at(fetchUpdated_at);
 
+      setIsLoading(true);
+
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${fetchAccessToken}`;
@@ -55,9 +69,11 @@ const index = () => {
           }/${date.getFullYear()}`
         )
         .then((res) => {
+          setIsLoading(false);
           setJurnal(res.data.jurnal);
         })
         .catch((err) => {
+          setIsLoading(false);
           if (err.response.status === 422)
             return Alert.alert(
               "Sorry!",
@@ -72,7 +88,8 @@ const index = () => {
     };
 
     fetchData();
-  }, []);
+    setIsReload(false);
+  }, [isReload]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -196,12 +213,33 @@ const index = () => {
       await shareAsync(file.uri);
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       Alert.alert(
         "Sorry!",
         "Ada masalah dengan aplikasi kami. Mohon hubungi tim pengembang!"
       );
-      setIsLoading(false);
     }
+  };
+
+  const [show, setShow] = useState(false);
+  const getFormattedDate = (dateValue) => {
+    // Membuat objek formatter untuk menampilkan tanggal dalam format yang diinginkan
+    const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+      weekday: "long", // Nama hari dalam bahasa Indonesia
+      day: "numeric", // Hari dalam angka
+      month: "long", // Nama bulan dalam bahasa Indonesia
+      year: "numeric", // Tahun
+    });
+
+    // Format tanggal menggunakan objek formatter
+    return dateFormatter.format(dateValue);
+  };
+
+  const onChangeDate = (e, selectedDate) => {
+    setDate(selectedDate);
+    setIsReload(true);
+    setShow(false);
+    return 1;
   };
 
   return (
@@ -421,7 +459,7 @@ const index = () => {
             justifyContent: "center",
             marginBottom: 10,
           }}
-          onPress={generatePdf}
+          onPress={() => setModalVisible(true)}
         >
           <Text
             style={{
@@ -431,14 +469,138 @@ const index = () => {
               width: "100%",
               textAlign: "center",
             }}
-            disabled={isLoading}
           >
             Unduh Jurnal
           </Text>
         </TouchableOpacity>
+
+        <Modal transparent={true} visible={modalVisible}>
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Unduh Jurnal</Text>
+                <Icon1
+                  name="close"
+                  size={30}
+                  onPress={() => setModalVisible(false)}
+                />
+              </View>
+              <View style={styles.formGroup}>
+                <Icon2
+                  name="calendar"
+                  style={styles.icon}
+                  size={20}
+                  color="#000"
+                />
+                <Text style={styles.inputGroup} onPress={() => setShow(true)}>
+                  {getFormattedDate(date)}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#2099FF",
+                  width: "100%",
+                  minHeight: 50,
+                  borderRadius: 10,
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 10,
+                }}
+                onPress={() => {
+                  setModalVisible(false);
+                  generatePdf();
+                }}
+                disabled={isLoading}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    color: "#FFF",
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                >
+                  Unduh Jurnal
+                </Text>
+              </TouchableOpacity>
+
+              {show && (
+                <View
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <DateTimePicker
+                    value={date}
+                    mode="date"
+                    is24Hour={true}
+                    onChange={onChangeDate}
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+        </Modal>
       </View>
     </SafeAreaProvider>
   );
 };
 
 export default index;
+
+const styles = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    width: "90%",
+    minHeight: "20%",
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    paddingVertical: 15,
+    paddingLeft: 20,
+    paddingRight: 15,
+  },
+  modalHeader: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  inputGroup: {
+    backgroundColor: "#EAEAEA",
+    padding: 5,
+    width: "85%",
+  },
+  formGroup: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#EAEAEA",
+    padding: 5,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  icon: {
+    padding: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+});

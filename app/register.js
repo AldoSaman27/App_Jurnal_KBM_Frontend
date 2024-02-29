@@ -1,3 +1,12 @@
+import axios from "axios";
+import Icon1 from "react-native-vector-icons/Ionicons";
+import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon3 from "react-native-vector-icons/FontAwesome";
+import Icon4 from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
+import { Link, router } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   View,
   Text,
@@ -6,15 +15,6 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import Icon1 from "react-native-vector-icons/Ionicons";
-import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
-import Icon3 from "react-native-vector-icons/FontAwesome";
-import Icon4 from "react-native-vector-icons/MaterialIcons";
-import { Link, router } from "expo-router";
-import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 
 const register = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,10 +23,6 @@ const register = () => {
   const [nameValue, setNameValue] = useState("");
   const [nipValue, setNipValue] = useState("");
   const [mapelValue, setMapelValue] = useState("");
-
-  useEffect(() => {
-    // AsyncStorage.clear();
-  }, []);
 
   const handleSubmit = async () => {
     if (
@@ -79,6 +75,7 @@ const register = () => {
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/register`, formData)
       .then((res) => {
         setIsLoading(false);
+
         AsyncStorage.setItem("accessToken", res.data.user.accessToken);
         AsyncStorage.setItem("id", res.data.user.id.toString());
         AsyncStorage.setItem("name", res.data.user.name);
@@ -88,6 +85,7 @@ const register = () => {
         AsyncStorage.setItem("email", res.data.user.email);
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
+
         Alert.alert(
           "Success!",
           "Your account has been created.",
@@ -104,51 +102,39 @@ const register = () => {
       })
       .catch((err) => {
         setIsLoading(false);
-        console.log(err);
-        if (err.response.data.errors.email) {
+
+        if (err.response.data.errors.email)
           return Alert.alert("Sorry!", err.response.data.errors.email[0]);
-        } else if (err.response.data.errors.nip) {
+        else if (err.response.data.errors.nip)
           return Alert.alert("Sorry!", err.response.data.errors.nip[0]);
-        } else if (err.response.status === 422) {
-          return Alert.alert(
-            "Sorry!",
-            "Nampaknya terjadi masalah pada aplikasi kami. Mohon segera hubungi pengembang kami!"
-          );
-        } else
-          return Alert.alert(
-            "Sorry!",
-            "Internal Server Error. Please contact our developer immediately!"
-          );
+
+        return Alert.alert(
+          "Sorry!",
+          "Internal Server Error. Please contact our developer immediately!"
+        );
       });
     return 1;
   };
 
   return (
     <SafeAreaProvider>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Icon1
-          name="journal"
-          size={100}
-          color="#2099FF"
-          style={{ marginBottom: 20 }}
-        />
-        <Text style={{ width: "90%", fontWeight: "bold", marginBottom: 10 }}>
-          Account Information
-        </Text>
-        <View style={styles.formGroup}>
+      <View style={styles.container}>
+        <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
+        <Text style={styles.heading_text}>Account Information</Text>
+        <View style={styles.form_group}>
           <Icon2 name="email" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Email"
             inputMode="email"
             autoCapitalize="none"
             onChangeText={(text) => setEmailValue(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon2 name="key" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Password"
             inputMode="text"
             secureTextEntry={true}
@@ -156,45 +142,31 @@ const register = () => {
             onChangeText={(text) => setPasswordValue(text)}
           />
         </View>
-        <Text
-          style={{
-            width: "90%",
-            fontWeight: "bold",
-            marginTop: 10,
-            marginBottom: 10,
-          }}
-        >
-          Personal Information
-        </Text>
-        <View style={styles.formGroup}>
+        <Text style={styles.heading_text}>Personal Information</Text>
+        <View style={styles.form_group}>
           <Icon3 name="user" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Name"
             inputMode="text"
             autoCapitalize="none"
             onChangeText={(text) => setNameValue(text)}
           />
         </View>
-        <View style={styles.formGroup}>
-          <Icon4
-            name="text-snippet"
-            style={styles.icon}
-            size={20}
-            color="#000"
-          />
+        <View style={styles.form_group}>
+          <Icon4 name="text-snippet" style={styles.icon} size={20} />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="NIP"
             inputMode="numeric"
             autoCapitalize="none"
             onChangeText={(text) => setNipValue(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon4 name="subject" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Mapel"
             inputMode="text"
             autoCapitalize="none"
@@ -202,20 +174,17 @@ const register = () => {
           />
         </View>
         <TouchableOpacity
-          style={styles.buttonGroup}
+          style={styles.button_group}
           disabled={isLoading}
           onPress={handleSubmit}
         >
-          <Text style={styles.buttonText}>
+          <Text style={styles.button_text}>
             {isLoading ? "Please Wait..." : "Register"}
           </Text>
         </TouchableOpacity>
-        <Text style={{ marginTop: 20 }}>
+        <Text style={styles.login_text}>
           Punya akun?{" "}
-          <Link
-            href={"/login"}
-            style={{ color: "#2099FF", fontWeight: "bold" }}
-          >
+          <Link href={"/login"} style={styles.login_text_link}>
             Masuk
           </Link>
         </Text>
@@ -227,12 +196,25 @@ const register = () => {
 export default register;
 
 const styles = StyleSheet.create({
-  inputGroup: {
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logo: {
+    marginBottom: 20,
+  },
+  heading_text: {
+    width: "90%",
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input_group: {
     backgroundColor: "#FFF",
     padding: 5,
     width: "85%",
   },
-  formGroup: {
+  form_group: {
     display: "center",
     flexDirection: "row",
     alignItems: "center",
@@ -247,7 +229,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-  buttonGroup: {
+  button_group: {
     width: "90%",
     padding: 12,
     backgroundColor: "#2099FF",
@@ -257,10 +239,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: {
+  button_text: {
     fontWeight: "bold",
     fontSize: 15,
     textAlign: "center",
     color: "#FFF",
+  },
+  login_text: {
+    marginTop: 20,
+  },
+  login_text_link: {
+    color: "#2099FF",
+    fontWeight: "bold",
   },
 });

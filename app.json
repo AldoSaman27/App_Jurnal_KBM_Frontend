@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "App_Jurnal_KBM",
+    "slug": "App_Jurnal_KBM",
+    "scheme": "App_Jurnal_KBM",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.aldosaman.App_Jurnal_KBM"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Apakah Anda ingin memberikan izin kepada aplikasi untuk mengakses file?"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "162cc761-4093-49b8-8fc4-078740cf4a0a"
+      }
+    }
+  }
+}

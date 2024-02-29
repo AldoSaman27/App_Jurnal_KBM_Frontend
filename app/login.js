@@ -47,6 +47,7 @@ const login = () => {
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/login`, formData)
       .then((res) => {
         setIsLoading(false);
+
         AsyncStorage.setItem("accessToken", res.data.user.accessToken);
         AsyncStorage.setItem("id", res.data.user.id.toString());
         AsyncStorage.setItem("name", res.data.user.name);
@@ -56,17 +57,16 @@ const login = () => {
         AsyncStorage.setItem("email", res.data.user.email);
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
+
         router.replace("/");
       })
       .catch((err) => {
         setIsLoading(false);
-        if (err.response.status === 422)
-          return Alert.alert(
-            "Sorry!",
-            "Nampaknya terjadi masalah pada aplikasi kami. Mohon segera hubungi pengembang kami!"
-          );
 
-        Alert.alert(
+        if (err.response.data.message)
+          return Alert.alert("Opss!", err.response.data.message);
+
+        return Alert.alert(
           "Sorry!",
           "Internal Server Error. Please contact our developer immediately!"
         );
@@ -76,27 +76,22 @@ const login = () => {
 
   return (
     <SafeAreaProvider>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Icon1
-          name="journal"
-          size={100}
-          color="#2099FF"
-          style={{ marginBottom: 20 }}
-        />
-        <View style={styles.formGroup}>
+      <View style={styles.container}>
+        <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
+        <View style={styles.form_group}>
           <Icon2 name="email" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Email"
             inputMode="email"
             autoCapitalize="none"
             onChangeText={(text) => setEmailValue(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon2 name="key" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Password"
             inputMode="text"
             secureTextEntry={true}
@@ -105,20 +100,17 @@ const login = () => {
           />
         </View>
         <TouchableOpacity
-          style={styles.buttonGroup}
+          style={styles.button_groupd}
           disabled={isLoading}
           onPress={handleSubmit}
         >
-          <Text style={styles.buttonText}>
+          <Text style={styles.button_text}>
             {isLoading ? "Please Wait..." : "Log In"}
           </Text>
         </TouchableOpacity>
-        <Text style={{ marginTop: 20 }}>
+        <Text style={styles.register_text}>
           Tidak punya akun?{" "}
-          <Link
-            href={"/register"}
-            style={{ color: "#2099FF", fontWeight: "bold" }}
-          >
+          <Link href={"/register"} style={styles.register_text_link}>
             Buat Akun
           </Link>
         </Text>
@@ -130,12 +122,20 @@ const login = () => {
 export default login;
 
 const styles = StyleSheet.create({
-  inputGroup: {
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logo: {
+    marginBottom: 20,
+  },
+  input_group: {
     backgroundColor: "#FFF",
     padding: 5,
     width: "85%",
   },
-  formGroup: {
+  form_group: {
     display: "center",
     flexDirection: "row",
     alignItems: "center",
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-  buttonGroup: {
+  button_groupd: {
     width: "90%",
     padding: 12,
     backgroundColor: "#2099FF",
@@ -160,10 +160,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: {
+  button_text: {
     fontWeight: "bold",
     fontSize: 15,
     textAlign: "center",
     color: "#FFF",
+  },
+  register_text: {
+    marginTop: 20,
+  },
+  register_text_link: {
+    color: "#2099FF",
+    fontWeight: "bold",
   },
 });

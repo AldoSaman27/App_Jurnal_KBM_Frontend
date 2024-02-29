@@ -14,6 +14,7 @@ export default function layout() {
       await axios
         .get(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/checktoken`)
         .catch(() => {
+          if (fetchAccessToken) AsyncStorage.clear();
           return router.replace("/login");
         });
     };

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "App_Jurnal_KBM",
-    "slug": "App_Jurnal_KBM",
-    "scheme": "App_Jurnal_KBM",
+    "name": "Jurnal",
+    "slug": "jurnal",
+    "scheme": "jurnal",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.aldosaman.App_Jurnal_KBM"
+      "package": "com.aldosaman.jurnal"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,8 +40,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "162cc761-4093-49b8-8fc4-078740cf4a0a"
+        "projectId": "63cdd97e-71e8-450b-8b0a-ab4331244ed2"
       }
-    }
+    },
+    "owner": "aldosaman"
   }
 }

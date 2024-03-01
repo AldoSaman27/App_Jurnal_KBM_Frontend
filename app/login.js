@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button_text: {
-    fontWeight: "bold",
+    fontWeight: "900",
     fontSize: 15,
     textAlign: "center",
     color: "#FFF",
@@ -171,6 +171,6 @@ const styles = StyleSheet.create({
   },
   register_text_link: {
     color: "#2099FF",
-    fontWeight: "bold",
+    fontWeight: "900",
   },
 });

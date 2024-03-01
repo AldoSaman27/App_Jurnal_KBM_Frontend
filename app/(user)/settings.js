@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2099FF",
     paddingVertical: 7.5,
     paddingHorizontal: 2.5,
-    borderRadius: "100%",
+    borderRadius: 100,
     position: "absolute",
     bottom: 0,
     right: 0,
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button_text: {
-    fontWeight: "bold",
+    fontWeight: "900",
     fontSize: 15,
     textAlign: "center",
     color: "#FFF",

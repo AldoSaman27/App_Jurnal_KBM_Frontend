@@ -94,9 +94,9 @@ const index = () => {
       <View style={styles.container}>
         <Image
           source={`${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${foto}`}
-          style={styles.userImage}
+          style={styles.user_image}
         />
-        <Text style={{ fontSize: 30, fontWeight: "bold" }}>{name}</Text>
+        <Text style={styles.user_name}>{name}</Text>
         <View style={styles.heading_container}>
           <Text style={styles.heading_text}>Personal Info</Text>
           <Link style={styles.heading_text} href="/(user)/settings">
@@ -210,13 +210,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
   },
-  userImage: {
+  user_image: {
     width: 150,
     height: 150,
     borderWidth: 5,
     borderColor: "#2099FF",
     borderRadius: 100,
     marginBottom: 20,
+  },
+  user_name: {
+    fontSize: 30,
+    fontWeight: "900",
   },
   heading_container: {
     width: "100%",
@@ -228,7 +232,7 @@ const styles = StyleSheet.create({
   },
   heading_text: {
     fontSize: 15,
-    fontWeight: 500,
+    fontWeight: "500",
   },
   personal_infomartion: {
     backgroundColor: "#EAEAEA",
@@ -251,12 +255,12 @@ const styles = StyleSheet.create({
   },
   personal_infomartion_heading_text: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
     color: "#757575",
   },
   personal_infomartion_text: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   jurnal_button: {
     backgroundColor: "#2099FF",
@@ -270,7 +274,7 @@ const styles = StyleSheet.create({
   },
   jurnal_button_text: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
     color: "#FFF",
     width: "100%",
     textAlign: "center",
@@ -307,7 +311,7 @@ const styles = StyleSheet.create({
   },
   modal_title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   input_group: {
     backgroundColor: "#EAEAEA",

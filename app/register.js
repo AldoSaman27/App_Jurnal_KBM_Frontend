@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   heading_text: {
     width: "90%",
-    fontWeight: "bold",
+    fontWeight: "900",
     marginBottom: 10,
   },
   input_group: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button_text: {
-    fontWeight: "bold",
+    fontWeight: "900",
     fontSize: 15,
     textAlign: "center",
     color: "#FFF",
@@ -250,6 +250,6 @@ const styles = StyleSheet.create({
   },
   login_text_link: {
     color: "#2099FF",
-    fontWeight: "bold",
+    fontWeight: "900",
   },
 });

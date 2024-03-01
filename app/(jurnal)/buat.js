@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "900",
     color: "#2099FF",
   },
   input_group: {
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   button_text: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "900",
     textAlign: "center",
     color: "#FFF",
   },

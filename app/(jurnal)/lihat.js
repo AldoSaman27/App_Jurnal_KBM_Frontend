@@ -195,12 +195,12 @@ const styles = StyleSheet.create({
   },
   heading_container_text_1: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "900",
     color: "#2099FF",
   },
   heading_container_text_2: {
     fontSize: 15,
-    fontWeight: 500,
+    fontWeight: "500",
   },
   card_container: {
     backgroundColor: "#FFF",
@@ -220,15 +220,15 @@ const styles = StyleSheet.create({
   },
   card_heading_title: {
     color: "#757575",
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   card_heading_text: {
     color: "#000",
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   card_heading_text_2: {
     color: "#000",
-    fontWeight: "bold",
+    fontWeight: "900",
     maxWidth: "50%",
   },
   card_image: {
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   button_delete_text: {
     color: "#FFF",
-    fontWeight: "bold",
+    fontWeight: "900",
   },
   date_time_picker_view: {
     display: "flex",

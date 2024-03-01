@@ -110,7 +110,7 @@ const register = () => {
 
         return Alert.alert(
           "Sorry!",
-          "Internal Server Error. Please contact our developer immediately!"
+          "Internal Server Error. Please contact the development team!"
         );
       });
     return 1;

@@ -2,7 +2,6 @@ import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -16,44 +15,24 @@ import {
   Alert,
 } from "react-native";
 
+// Components
+import fetchFromAsyncStorage from "../../components/fetchFromAsyncStorage";
+import getFormattedDate from "../../components/getFormattedDate";
+
 const BuatJurnal = () => {
-  const [accessToken, setAccessToken] = useState("");
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [NIP, setNIP] = useState("");
-  const [mapel, setMapel] = useState("");
-  const [foto, setFoto] = useState("");
-  const [email, setEmail] = useState("");
-  const [created_at, setCreated_at] = useState("");
-  const [updated_at, setUpdated_at] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchAccessToken = await AsyncStorage.getItem("accessToken");
-      setAccessToken(fetchAccessToken);
-      const fetchId = await AsyncStorage.getItem("id");
-      setId(fetchId);
-      const fetchName = await AsyncStorage.getItem("name");
-      setName(fetchName);
-      const fetchNip = await AsyncStorage.getItem("nip");
-      setNIP(fetchNip);
-      const fetchMapel = await AsyncStorage.getItem("mapel");
-      setMapel(fetchMapel);
-      const fetchFoto = await AsyncStorage.getItem("foto");
-      setFoto(fetchFoto);
-      const fetchEmail = await AsyncStorage.getItem("email");
-      setEmail(fetchEmail);
-      const fetchCreated_at = await AsyncStorage.getItem("created_at");
-      setCreated_at(fetchCreated_at);
-      const fetchUpdated_at = await AsyncStorage.getItem("updated_at");
-      setUpdated_at(fetchUpdated_at);
-    };
-
-    fetchData();
-  }, []);
-
+  const [storageData, setStorageData] = useState({
+    accessToken: null,
+    id: null,
+    name: null,
+    nip: null,
+    mapel: null,
+    foto: null,
+    email: null,
+    created_at: null,
+    updated_at: null,
+  });
   const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
+  const [dateShow, setDateShow] = useState(false);
   const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
 
@@ -67,22 +46,30 @@ const BuatJurnal = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const {
+    accessToken,
+    id,
+    name,
+    nip,
+    mapel,
+    foto,
+    email,
+    created_at,
+    updated_at,
+  } = storageData;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedData = await fetchFromAsyncStorage();
+      setStorageData(fetchedData);
+    };
+
+    fetchData();
+  }, []);
+
   const onChangeDate = (e, selectedDate) => {
     setDate(selectedDate);
-    setShow(false);
-  };
-
-  const getFormattedDate = (dateValue) => {
-    // Membuat objek formatter untuk menampilkan tanggal dalam format yang diinginkan
-    const dateFormatter = new Intl.DateTimeFormat("id-ID", {
-      weekday: "long", // Nama hari dalam bahasa Indonesia
-      day: "numeric", // Hari dalam angka
-      month: "long", // Nama bulan dalam bahasa Indonesia
-      year: "numeric", // Tahun
-    });
-
-    // Format tanggal menggunakan objek formatter
-    return dateFormatter.format(dateValue);
+    setDateShow(false);
   };
 
   const pickImage = async () => {
@@ -96,7 +83,7 @@ const BuatJurnal = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (
       jamPembelajaran === "" ||
       jamPembelajaran.length === 0 ||
@@ -152,14 +139,13 @@ const BuatJurnal = () => {
 
     setIsLoading(true);
 
-    const formattedDate = `${date.getFullYear()}-${(
-      "0" +
-      (date.getMonth() + 1)
-    ).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
-
     const formData = new FormData();
-    formData.append("nip", NIP);
-    formData.append("hari_tanggal", formattedDate);
+    formData.append("nip", nip);
+    formData.append(
+      "hari_tanggal",
+      `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-
+      ${("0" + date.getDate()).slice(-2)}`
+    );
     formData.append("jam_ke", jamPembelajaran);
     formData.append("kelas", kelas);
     formData.append("uraian_kegiatan", uraianKegiatan);
@@ -172,12 +158,14 @@ const BuatJurnal = () => {
       name: imageFile.fileName,
       type: imageFile.mimeType,
     });
+
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     axios.defaults.headers.common["Accept"] = "application/json";
-    axios
+    await axios
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/jurnal/store`, formData)
-      .then((res) => {
+      .then(() => {
         setIsLoading(false);
+
         Alert.alert(
           "Success!",
           "Berhasil membuat Jurnal.",
@@ -192,15 +180,10 @@ const BuatJurnal = () => {
           }
         );
       })
-      .catch((err) => {
+      .catch(() => {
         setIsLoading(false);
-        if (err.response.status === 422)
-          return Alert.alert(
-            "Sorry!",
-            "Ada masalah dengan aplikasi kami. Mohon hubungi tim pengembang!"
-          );
 
-        Alert.alert(
+        return Alert.alert(
           "Sorry!",
           "Internal Server Error. Please contact the development team!"
         );
@@ -210,153 +193,93 @@ const BuatJurnal = () => {
 
   return (
     <ScrollView>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#2099FF" }}>
-          Buat Jurnal
-        </Text>
-        <View style={styles.formGroup}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Buat Jurnal</Text>
+        <View style={styles.form_group}>
           <Icon name="calendar" style={styles.icon} size={20} color="#000" />
-          <Text style={styles.inputGroup} onPress={() => setShow(true)}>
+          <Text style={styles.input_group} onPress={() => setDateShow(true)}>
             {getFormattedDate(date)}
           </Text>
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon name="clock-o" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Jam Pembelajaran"
             onChangeText={(text) => setJamPembelajaran(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon name="building" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Kelas"
             autoCapitalize={"characters"}
             onChangeText={(text) => setKelas(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon name="list" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Uraian Kegiatan"
             onChangeText={(text) => setUraianKegiatan(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon name="users" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Hadir"
             inputMode="numeric"
             onChangeText={(text) => setSiswaHadir(text)}
           />
         </View>
-        <View style={styles.formGroup}>
+        <View style={styles.form_group}>
           <Icon name="user-times" style={styles.icon} size={20} color="#000" />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Tanpa Kabar"
             inputMode="numeric"
             onChangeText={(text) => setSiswaTanpaKabar(text)}
           />
         </View>
-        <View style={styles.formGroup}>
-          <Icon
-            name="user-md"
-            style={{ padding: 5, paddingLeft: 13.5, paddingRight: 13.5 }}
-            size={23}
-            color="#000"
-          />
+        <View style={styles.form_group}>
+          <Icon name="user-md" style={styles.icon_user_md} size={23} />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Sakit"
             inputMode="numeric"
             onChangeText={(text) => setSiswaSakit(text)}
           />
         </View>
-        <View style={styles.formGroup}>
-          <Icon
-            name="user-plus"
-            style={{ padding: 5, paddingLeft: 12.5, paddingRight: 12.5 }}
-            size={20}
-            color="#000"
-          />
+        <View style={styles.form_group}>
+          <Icon name="user-plus" style={styles.icon_user_plus} size={20} />
           <TextInput
-            style={styles.inputGroup}
+            style={styles.input_group}
             placeholder="Izin"
             inputMode="numeric"
             onChangeText={(text) => setSiswaIzin(text)}
           />
         </View>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#2099FF",
-            padding: 10,
-            borderRadius: 10,
-            marginTop: 10,
-            marginBottom: 10,
-          }}
-          onPress={pickImage}
-        >
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#FFF",
-            }}
-          >
-            Pilih Foto Kegiatan
-          </Text>
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.button_text}>Pilih Foto Kegiatan</Text>
         </TouchableOpacity>
 
-        {image && (
-          <Image
-            source={{ uri: image }}
-            style={{
-              width: "100%",
-              height: 210,
-              borderRadius: 10,
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-          />
-        )}
+        {image && <Image source={{ uri: image }} style={styles.pick_image} />}
 
         <TouchableOpacity
-          style={{
-            backgroundColor: "#2099FF",
-            padding: 10,
-            borderRadius: 10,
-            marginTop: 10,
-            marginBottom: 10,
-          }}
+          style={styles.button}
           onPress={handleSubmit}
           disabled={isLoading}
         >
-          <Text
-            style={{
-              fontSize: 15,
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#FFF",
-            }}
-          >
+          <Text style={styles.button_text}>
             {isLoading ? "Please Wait..." : "Submit"}
           </Text>
         </TouchableOpacity>
 
-        {show && (
-          <View
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        {dateShow && (
+          <View style={styles.date_time_picker_view}>
             <DateTimePicker
               value={date}
               mode="date"
@@ -373,12 +296,20 @@ const BuatJurnal = () => {
 export default BuatJurnal;
 
 const styles = StyleSheet.create({
-  inputGroup: {
+  container: {
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2099FF",
+  },
+  input_group: {
     backgroundColor: "#FFF",
     padding: 5,
     width: "85%",
   },
-  formGroup: {
+  form_group: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -393,5 +324,40 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingLeft: 10,
     paddingRight: 10,
+  },
+  icon_user_md: {
+    padding: 5,
+    paddingLeft: 13.5,
+    paddingRight: 13.5,
+  },
+  icon_user_plus: {
+    padding: 5,
+    paddingLeft: 12.5,
+    paddingRight: 12.5,
+  },
+  button: {
+    backgroundColor: "#2099FF",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  button_text: {
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#FFF",
+  },
+  pick_image: {
+    width: "100%",
+    height: 210,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  date_time_picker_view: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

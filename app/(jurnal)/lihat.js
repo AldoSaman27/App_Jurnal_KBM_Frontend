@@ -1,6 +1,5 @@
 import axios from "axios";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import {
   View,
@@ -9,63 +8,54 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  StyleSheet,
 } from "react-native";
 
-const LihatJurnal = () => {
-  const [accessToken, setAccessToken] = useState("");
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [NIP, setNIP] = useState("");
-  const [mapel, setMapel] = useState("");
-  const [foto, setFoto] = useState("");
-  const [email, setEmail] = useState("");
-  const [created_at, setCreated_at] = useState("");
-  const [updated_at, setUpdated_at] = useState("");
+// Components
+import getFormattedDate from "../../components/getFormattedDate";
+import fetchFromAsyncStorage from "../../components/fetchFromAsyncStorage";
+import getJurnalData from "../../components/getJurnalData";
+import getMonthName from "../../components/getMonthName";
 
+const LihatJurnal = () => {
+  const [storageData, setStorageData] = useState({
+    accessToken: null,
+    id: null,
+    name: null,
+    nip: null,
+    mapel: null,
+    foto: null,
+    email: null,
+    created_at: null,
+    updated_at: null,
+  });
   const [jurnal, setJurnal] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [dateShow, setDateShow] = useState(false);
+
+  const {
+    accessToken,
+    id,
+    name,
+    nip,
+    mapel,
+    foto,
+    email,
+    created_at,
+    updated_at,
+  } = storageData;
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchAccessToken = await AsyncStorage.getItem("accessToken");
-      setAccessToken(fetchAccessToken);
-      const fetchId = await AsyncStorage.getItem("id");
-      setId(fetchId);
-      const fetchName = await AsyncStorage.getItem("name");
-      setName(fetchName);
-      const fetchNip = await AsyncStorage.getItem("nip");
-      setNIP(fetchNip);
-      const fetchMapel = await AsyncStorage.getItem("mapel");
-      setMapel(fetchMapel);
-      const fetchFoto = await AsyncStorage.getItem("foto");
-      setFoto(fetchFoto);
-      const fetchEmail = await AsyncStorage.getItem("email");
-      setEmail(fetchEmail);
-      const fetchCreated_at = await AsyncStorage.getItem("created_at");
-      setCreated_at(fetchCreated_at);
-      const fetchUpdated_at = await AsyncStorage.getItem("updated_at");
-      setUpdated_at(fetchUpdated_at);
+      const fetchedData = await fetchFromAsyncStorage();
+      setStorageData(fetchedData);
 
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${fetchAccessToken}`;
-      axios.defaults.headers.common["Accept"] = "application/json";
-      await axios
-        .get(
-          `${process.env.EXPO_PUBLIC_API_URL}/api/jurnal/index/${fetchNip}/${
-            date.getMonth() + 1
-          }/${date.getFullYear()}`
-        )
+      await getJurnalData(fetchedData.accessToken, fetchedData.nip, date)
         .then((res) => {
-          setJurnal(res.data.jurnal);
+          setJurnal(res);
         })
         .catch((err) => {
-          if (err.response.status === 422)
-            return Alert.alert(
-              "Sorry!",
-              "Ada masalah dengan aplikasi kami. Mohon hubungi tim pengembang!"
-            );
-
           Alert.alert(
             "Sorry!",
             "Internal Server Error. Please contact the development team!"
@@ -74,49 +64,25 @@ const LihatJurnal = () => {
     };
 
     fetchData();
+    setIsUpdate(false);
   }, [isUpdate]);
-
-  const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
 
   const onChangeDate = (e, selectedDate) => {
     setDate(selectedDate);
-    setShow(false);
+    setDateShow(false);
+    setIsUpdate(true);
+    return 1;
   };
 
-  const getMonthName = (monthNumber) => {
-    const months = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-    return months[monthNumber];
-  };
-
-  const handleDeleteConfirm = async (id) => {
+  const handleDeleteConfirm = async (j_id) => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     axios.defaults.headers.common["Accept"] = `application/json`;
     await axios
-      .delete(`${process.env.EXPO_PUBLIC_API_URL}/api/jurnal/destroy/${id}`)
+      .delete(`${process.env.EXPO_PUBLIC_API_URL}/api/jurnal/destroy/${j_id}`)
       .then((res) => {
         setIsUpdate(true);
       })
       .catch((err) => {
-        if (err.response.status === 422)
-          return Alert.alert(
-            "Sorry!",
-            "Ada masalah dengan aplikasi kami. Mohon hubungi tim pengembang!"
-          );
-
         Alert.alert(
           "Sorry!",
           "Internal Server Error. Please contact the development team!"
@@ -139,199 +105,69 @@ const LihatJurnal = () => {
 
   return (
     <ScrollView>
-      <View style={{ padding: 20 }}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontSize: 20, fontWeight: "bold", color: "#2099FF" }}>
+      <View style={styles.container}>
+        <View style={styles.heading_container}>
+          <Text style={styles.heading_container_text_1}>
             Jurnal - {getMonthName(date.getMonth())} {date.getFullYear()}
           </Text>
           <Text
-            style={{ fontSize: 15, fontWeight: 500 }}
-            onPress={() => setShow(true)}
+            style={styles.heading_container_text_2}
+            onPress={() => setDateShow(true)}
           >
             Edit
           </Text>
         </View>
 
         {jurnal.map((item, index) => {
-          // Memecah tanggal menjadi bagian-bagian (hari, bulan, tahun)
-          const [year, month, day] = item.hari_tanggal.split("-");
-
-          // Membuat objek Date dari bagian-bagian tanggal
-          const hari_tanggal = new Date(year, month - 1, day); // Bulan dimulai dari 0 (Januari = 0), sehingga perlu dikurangi 1
-
-          // Membuat objek formatter untuk menampilkan tanggal dalam format yang diinginkan
-          const dateFormatter = new Intl.DateTimeFormat("id-ID", {
-            weekday: "long", // Nama hari dalam bahasa Indonesia
-            day: "numeric", // Hari dalam angka
-            month: "long", // Nama bulan dalam bahasa Indonesia
-            year: "numeric", // Tahun
-          });
-
-          // Format tanggal menggunakan objek formatter
-          const formattedDate = dateFormatter.format(hari_tanggal);
-
           return (
-            <View
-              key={index}
-              style={{
-                backgroundColor: "#FFF",
-                marginBottom: 10,
-                marginTop: 10,
-                padding: 10,
-                borderRadius: 10,
-                borderTopWidth: 5,
-                borderTopColor: "#2099FF",
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 5,
-                }}
-              >
-                <Text style={{ color: "#757575", fontWeight: "bold" }}>
-                  Hari / Tanggal
-                </Text>
-                <Text style={{ color: "#000", fontWeight: "bold" }}>
-                  {formattedDate}
+            <View key={index} style={styles.card_container}>
+              <View style={styles.card_heading}>
+                <Text style={styles.card_heading_title}>Hari / Tanggal</Text>
+                <Text style={styles.card_heading_text}>
+                  {getFormattedDate(new Date(item.hari_tanggal))}
                 </Text>
               </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 5,
-                }}
-              >
-                <Text style={{ color: "#757575", fontWeight: "bold" }}>
-                  Jam Pembelajaran
-                </Text>
-                <Text style={{ color: "#000", fontWeight: "bold" }}>
-                  {item.jam_ke}
-                </Text>
+              <View style={styles.card_heading}>
+                <Text style={styles.card_heading_title}>Jam Pembelajaran</Text>
+                <Text style={styles.card_heading_text}>{item.jam_ke}</Text>
               </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 5,
-                }}
-              >
-                <Text style={{ color: "#757575", fontWeight: "bold" }}>
-                  Kelas
-                </Text>
-                <Text style={{ color: "#000", fontWeight: "bold" }}>
-                  {item.kelas}
-                </Text>
+              <View style={styles.card_heading}>
+                <Text style={styles.card_heading_title}>Kelas</Text>
+                <Text style={styles.card_heading_text}>{item.kelas}</Text>
               </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 5,
-                }}
-              >
-                <Text style={{ color: "#757575", fontWeight: "bold" }}>
-                  Uraian Kegiatan
-                </Text>
-                <Text
-                  style={{ color: "#000", fontWeight: "bold", maxWidth: "50%" }}
-                >
+              <View style={styles.card_heading}>
+                <Text style={styles.card_heading_title}>Uraian Kegiatan</Text>
+                <Text style={styles.card_heading_text_2}>
                   {item.uraian_kegiatan}
                 </Text>
               </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 5,
-                }}
-              >
-                <Text style={{ color: "#757575", fontWeight: "bold" }}>
-                  Kehadiran
-                </Text>
-                <Text
-                  style={{ color: "#000", fontWeight: "bold", maxWidth: "50%" }}
-                >
-                  {item.kehadiran}
-                </Text>
+              <View style={styles.card_heading}>
+                <Text style={styles.card_heading_title}>Kehadiran</Text>
+                <Text style={styles.card_heading_text_2}>{item.kehadiran}</Text>
               </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 5,
-                }}
-              >
+              <View style={styles.card_heading}>
                 <Image
                   source={{
                     uri: `${process.env.EXPO_PUBLIC_API_URL}/uploads/foto_kegiatan/${item.foto_kegiatan}`,
                   }}
-                  style={{
-                    width: "100%",
-                    height: 210,
-                    borderRadius: 10,
-                    marginTop: 10,
-                    marginBottom: 10,
-                  }}
+                  style={styles.card_image}
                 />
               </View>
 
-              <View
-                style={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  justifyContent: "center",
-                  padding: 5,
-                }}
-              >
+              <View style={styles.card_footer}>
                 <TouchableOpacity
-                  style={{
-                    backgroundColor: "#DC3545",
-                    padding: 10,
-                    paddingLeft: 15,
-                    paddingRight: 15,
-                    borderRadius: 10,
-                  }}
+                  style={styles.button_delete}
                   onPress={() => handleDelete(item.id)}
                 >
-                  <Text style={{ color: "#FFF", fontWeight: "bold" }}>
-                    Hapus
-                  </Text>
+                  <Text style={styles.button_delete_text}>Hapus</Text>
                 </TouchableOpacity>
               </View>
             </View>
           );
         })}
 
-        {show && (
-          <View
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+        {dateShow && (
+          <View style={styles.date_time_picker_view}>
             <DateTimePicker
               value={date}
               mode="date"
@@ -346,3 +182,83 @@ const LihatJurnal = () => {
 };
 
 export default LihatJurnal;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  heading_container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  heading_container_text_1: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2099FF",
+  },
+  heading_container_text_2: {
+    fontSize: 15,
+    fontWeight: 500,
+  },
+  card_container: {
+    backgroundColor: "#FFF",
+    marginBottom: 10,
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 10,
+    borderTopWidth: 5,
+    borderTopColor: "#2099FF",
+  },
+  card_heading: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 5,
+  },
+  card_heading_title: {
+    color: "#757575",
+    fontWeight: "bold",
+  },
+  card_heading_text: {
+    color: "#000",
+    fontWeight: "bold",
+  },
+  card_heading_text_2: {
+    color: "#000",
+    fontWeight: "bold",
+    maxWidth: "50%",
+  },
+  card_image: {
+    width: "100%",
+    height: 210,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  card_footer: {
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "center",
+    padding: 5,
+  },
+  button_delete: {
+    backgroundColor: "#DC3545",
+    padding: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 10,
+  },
+  button_delete_text: {
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  date_time_picker_view: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+});

@@ -2,19 +2,21 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
 import { useEffect } from "react";
+import fetchFromAsyncStorage from "../components/fetchFromAsyncStorage";
 
 export default function layout() {
   useEffect(() => {
     const fetchData = async () => {
-      const fetchAccessToken = await AsyncStorage.getItem("accessToken");
+      const fetchedData = await fetchFromAsyncStorage();
+
       axios.defaults.headers.common[
         "Authorization"
-      ] = `Bearer ${fetchAccessToken}`;
+      ] = `Bearer ${fetchedData.accessToken}`;
       axios.defaults.headers.common["Accept"] = `application/json`;
       await axios
         .get(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/checktoken`)
         .catch(() => {
-          if (fetchAccessToken) AsyncStorage.clear();
+          if (fetchedData.accessToken) AsyncStorage.clear();
           return router.replace("/login");
         });
     };

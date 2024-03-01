@@ -67,7 +67,7 @@ const index = () => {
           setIsLoading(false);
           Alert.alert(
             "Sorry!",
-            "Internal Server Error. Please contact our developer immediately!"
+            "Internal Server Error. Please contact the development team!"
           );
         });
     };

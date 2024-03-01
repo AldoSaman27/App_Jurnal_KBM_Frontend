@@ -182,18 +182,18 @@ const index = () => {
               >
                 <Text style={styles.jurnal_button_text}>Unduh Jurnal</Text>
               </TouchableOpacity>
-
-              {dateShow && (
-                <View style={styles.date_time_picker_view}>
-                  <DateTimePicker
-                    value={date}
-                    mode="date"
-                    is24Hour={true}
-                    onChange={onChangeDate}
-                  />
-                </View>
-              )}
             </View>
+
+            {dateShow && (
+              <View style={styles.date_time_picker_view}>
+                <DateTimePicker
+                  value={date}
+                  mode="date"
+                  is24Hour={true}
+                  onChange={onChangeDate}
+                />
+              </View>
+            )}
           </View>
         </Modal>
       </View>
@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    margin: 20,
   },
   modal_background: {
     flex: 1,
@@ -294,7 +295,7 @@ const styles = StyleSheet.create({
   },
   modal_container: {
     width: "90%",
-    minHeight: "20%",
+    height: "20%",
     backgroundColor: "#FFF",
     borderRadius: 20,
     paddingVertical: 15,

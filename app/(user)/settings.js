@@ -145,7 +145,7 @@ const UserSettings = () => {
 
         Alert.alert(
           "Success!",
-          "Profile has been updated!",
+          "Profile has been updated.",
           [
             {
               text: "Oke",

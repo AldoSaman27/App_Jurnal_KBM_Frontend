@@ -168,7 +168,7 @@ const BuatJurnal = () => {
 
         Alert.alert(
           "Success!",
-          "Berhasil membuat Jurnal.",
+          "Jurnal has been created successfully!",
           [
             {
               text: "Oke",

@@ -100,7 +100,7 @@ const login = () => {
           />
         </View>
         <TouchableOpacity
-          style={styles.button_groupd}
+          style={styles.button_group}
           disabled={isLoading}
           onPress={handleSubmit}
         >
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-  button_groupd: {
+  button_group: {
     width: "90%",
     padding: 12,
     backgroundColor: "#2099FF",

@@ -2,7 +2,7 @@ import Icon1 from "react-native-vector-icons/MaterialIcons";
 import Icon2 from "react-native-vector-icons/FontAwesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Image } from "expo-image";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
@@ -99,12 +99,9 @@ const index = () => {
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>{name}</Text>
         <View style={styles.heading_container}>
           <Text style={styles.heading_text}>Personal Info</Text>
-          <Text
-            style={styles.heading_text}
-            onPress={() => router.replace("/login")}
-          >
+          <Link style={styles.heading_text} href="/(user)/settings">
             Edit
-          </Text>
+          </Link>
         </View>
         <View style={styles.personal_infomartion}>
           <View style={styles.personal_infomartion_heading}>

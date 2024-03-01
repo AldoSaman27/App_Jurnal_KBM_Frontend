@@ -139,13 +139,14 @@ const BuatJurnal = () => {
 
     setIsLoading(true);
 
+    const getYearFix = date.getFullYear();
+    const getMonthFix = ("0" + (date.getMonth() + 1)).slice(-2);
+    const getDateFix = ("0" + date.getDate()).slice(-2);
+    const formattedDate = `${getYearFix}-${getMonthFix}-${getDateFix}`;
+
     const formData = new FormData();
     formData.append("nip", nip);
-    formData.append(
-      "hari_tanggal",
-      `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-
-      ${("0" + date.getDate()).slice(-2)}`
-    );
+    formData.append("hari_tanggal", formattedDate);
     formData.append("jam_ke", jamPembelajaran);
     formData.append("kelas", kelas);
     formData.append("uraian_kegiatan", uraianKegiatan);
@@ -180,8 +181,10 @@ const BuatJurnal = () => {
           }
         );
       })
-      .catch(() => {
+      .catch((err) => {
         setIsLoading(false);
+
+        console.log(err);
 
         return Alert.alert(
           "Sorry!",

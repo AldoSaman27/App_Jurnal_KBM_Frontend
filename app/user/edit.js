@@ -20,7 +20,7 @@ import { router } from "expo-router";
 
 const FormData = global.FormData;
 
-const UserSettings = () => {
+const UserEdit = () => {
   const [storageData, setStorageData] = useState({
     accessToken: null,
     id: null,
@@ -240,7 +240,7 @@ const UserSettings = () => {
   );
 };
 
-export default UserSettings;
+export default UserEdit;
 
 const styles = StyleSheet.create({
   container: {

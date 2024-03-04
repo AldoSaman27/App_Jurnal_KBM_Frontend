@@ -1,8 +1,6 @@
 import axios from "axios";
 import Icon1 from "react-native-vector-icons/Ionicons";
-import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
-import Icon3 from "react-native-vector-icons/FontAwesome";
-import Icon4 from "react-native-vector-icons/MaterialIcons";
+import Icon2 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { Link, router } from "expo-router";
@@ -18,35 +16,12 @@ import {
 
 const register = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [nameValue, setNameValue] = useState("");
   const [nipValue, setNipValue] = useState("");
-  const [mapelValue, setMapelValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [passwordConfirmValue, setPasswordConfirmValue] = useState("");
 
   const handleSubmit = async () => {
     if (
-      emailValue === "" ||
-      emailValue.length === 0 ||
-      emailValue === null ||
-      emailValue === undefined
-    ) {
-      return Alert.alert("Opss!", "Email is required!");
-    } else if (
-      passwordValue === "" ||
-      passwordValue.length === 0 ||
-      passwordValue === null ||
-      passwordValue === undefined
-    ) {
-      return Alert.alert("Opss!", "Password is required!");
-    } else if (
-      nameValue === "" ||
-      nameValue.length === 0 ||
-      nameValue === null ||
-      nameValue === undefined
-    ) {
-      return Alert.alert("Opss!", "Name is required!");
-    } else if (
       nipValue === "" ||
       nipValue.length < 18 ||
       nipValue === null ||
@@ -54,22 +29,37 @@ const register = () => {
     ) {
       return Alert.alert("Opss!", "NIP is required or NIP must be 18 digits!");
     } else if (
-      mapelValue === "" ||
-      mapelValue.length === 0 ||
-      mapelValue === null ||
-      mapelValue === undefined
+      passwordValue === "" ||
+      passwordValue.length < 5 ||
+      passwordValue === null ||
+      passwordValue === undefined
     ) {
-      return Alert.alert("Opss!", "Mapel is required!");
+      return Alert.alert(
+        "Opss!",
+        "Password is required or Password must be 5 letters!"
+      );
+    } else if (
+      passwordConfirmValue === "" ||
+      passwordConfirmValue.length < 5 ||
+      passwordConfirmValue === null ||
+      passwordConfirmValue === undefined
+    ) {
+      return Alert.alert(
+        "Opss!",
+        "Password Confirm is required or Password Confirm must be 5 letters!"
+      );
+    } else if (passwordValue !== passwordConfirmValue) {
+      return Alert.alert(
+        "Opss!",
+        "Password and Password Confirm must be same!"
+      );
     }
 
     setIsLoading(true);
 
     const formData = {
-      email: emailValue,
-      password: passwordValue,
-      name: nameValue,
       nip: nipValue,
-      mapel: mapelValue,
+      password: passwordValue,
     };
     await axios
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/register`, formData)
@@ -82,7 +72,6 @@ const register = () => {
         AsyncStorage.setItem("nip", res.data.user.nip);
         AsyncStorage.setItem("mapel", res.data.user.mapel);
         AsyncStorage.setItem("foto", res.data.user.foto);
-        AsyncStorage.setItem("email", res.data.user.email);
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
@@ -103,9 +92,7 @@ const register = () => {
       .catch((err) => {
         setIsLoading(false);
 
-        if (err.response.data.errors.email)
-          return Alert.alert("Sorry!", err.response.data.errors.email[0]);
-        else if (err.response.data.errors.nip)
+        if (err.response.data.errors.nip)
           return Alert.alert("Sorry!", err.response.data.errors.nip[0]);
 
         return Alert.alert(
@@ -120,41 +107,8 @@ const register = () => {
     <SafeAreaProvider>
       <View style={styles.container}>
         <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
-        <Text style={styles.heading_text}>Account Information</Text>
         <View style={styles.form_group}>
-          <Icon2 name="email" style={styles.icon} size={20} color="#000" />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Email"
-            inputMode="email"
-            autoCapitalize="none"
-            onChangeText={(text) => setEmailValue(text)}
-          />
-        </View>
-        <View style={styles.form_group}>
-          <Icon2 name="key" style={styles.icon} size={20} color="#000" />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Password"
-            inputMode="text"
-            secureTextEntry={true}
-            autoCapitalize="none"
-            onChangeText={(text) => setPasswordValue(text)}
-          />
-        </View>
-        <Text style={styles.heading_text}>Personal Information</Text>
-        <View style={styles.form_group}>
-          <Icon3 name="user" style={styles.icon} size={20} color="#000" />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Name"
-            inputMode="text"
-            autoCapitalize="none"
-            onChangeText={(text) => setNameValue(text)}
-          />
-        </View>
-        <View style={styles.form_group}>
-          <Icon4 name="text-snippet" style={styles.icon} size={20} />
+          <Icon2 name="text-snippet" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="NIP"
@@ -164,13 +118,25 @@ const register = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon4 name="subject" style={styles.icon} size={20} color="#000" />
+          <Icon2 name="key" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
-            placeholder="Mapel"
+            placeholder="Password"
             inputMode="text"
+            secureTextEntry={true}
             autoCapitalize="none"
-            onChangeText={(text) => setMapelValue(text)}
+            onChangeText={(text) => setPasswordValue(text)}
+          />
+        </View>
+        <View style={styles.form_group}>
+          <Icon2 name="key" style={styles.icon} size={20} />
+          <TextInput
+            style={styles.input_group}
+            placeholder="Password Confirm"
+            inputMode="text"
+            secureTextEntry={true}
+            autoCapitalize="none"
+            onChangeText={(text) => setPasswordConfirmValue(text)}
           />
         </View>
         <TouchableOpacity
@@ -179,7 +145,7 @@ const register = () => {
           onPress={handleSubmit}
         >
           <Text style={styles.button_text}>
-            {isLoading ? "Please Wait..." : "Register"}
+            {isLoading ? "Register..." : "Register"}
           </Text>
         </TouchableOpacity>
         <Text style={styles.login_text}>
@@ -204,11 +170,6 @@ const styles = StyleSheet.create({
   logo: {
     marginBottom: 20,
   },
-  heading_text: {
-    width: "90%",
-    fontWeight: "900",
-    marginBottom: 10,
-  },
   input_group: {
     backgroundColor: "#FFF",
     padding: 5,
@@ -222,7 +183,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     padding: 5,
     borderRadius: 10,
-    margin: 5,
+    marginTop: 10,
+    marginBottom: 10,
   },
   icon: {
     padding: 5,

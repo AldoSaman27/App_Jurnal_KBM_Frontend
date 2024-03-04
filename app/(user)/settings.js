@@ -18,6 +18,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import axios from "axios";
 import { router } from "expo-router";
 
+const FormData = global.FormData;
+
 const UserSettings = () => {
   const [storageData, setStorageData] = useState({
     accessToken: null,
@@ -80,9 +82,7 @@ const UserSettings = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (
       nameValue === "" ||
       nameValue.length === 0 ||
@@ -126,6 +126,10 @@ const UserSettings = () => {
     formData.append("nip", nipValue);
     formData.append("mapel", mapelValue);
     formData.append("email", emailValue);
+
+    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+    axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
+    axios.defaults.headers.common["Accept"] = "application/json";
     await axios
       .post(
         `${process.env.EXPO_PUBLIC_API_URL}/api/auth/update/${id}`,

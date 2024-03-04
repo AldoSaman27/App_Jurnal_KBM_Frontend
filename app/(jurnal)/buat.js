@@ -19,6 +19,8 @@ import {
 import fetchFromAsyncStorage from "../../components/fetchFromAsyncStorage";
 import getFormattedDate from "../../components/getFormattedDate";
 
+const FormData = global.FormData;
+
 const BuatJurnal = () => {
   const [storageData, setStorageData] = useState({
     accessToken: null,
@@ -161,6 +163,7 @@ const BuatJurnal = () => {
     });
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+    axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
     axios.defaults.headers.common["Accept"] = "application/json";
     await axios
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/jurnal/store`, formData)

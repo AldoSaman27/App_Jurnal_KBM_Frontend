@@ -2,23 +2,22 @@ import axios from "axios";
 import Icon1 from "react-native-vector-icons/Ionicons";
 import Icon2 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
 import { Link, router } from "expo-router";
+import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   Alert,
 } from "react-native";
 
-const register = () => {
+const login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [nipValue, setNipValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-  const [passwordConfirmValue, setPasswordConfirmValue] = useState("");
 
   const handleSubmit = async () => {
     if (
@@ -38,31 +37,13 @@ const register = () => {
         "Opss!",
         "Password is required or Password must be 5 letters!"
       );
-    } else if (
-      passwordConfirmValue === "" ||
-      passwordConfirmValue.length < 5 ||
-      passwordConfirmValue === null ||
-      passwordConfirmValue === undefined
-    ) {
-      return Alert.alert(
-        "Opss!",
-        "Password Confirm is required or Password Confirm must be 5 letters!"
-      );
-    } else if (passwordValue !== passwordConfirmValue) {
-      return Alert.alert(
-        "Opss!",
-        "Password and Password Confirm must be same!"
-      );
     }
 
     setIsLoading(true);
 
-    const formData = {
-      nip: nipValue,
-      password: passwordValue,
-    };
+    const formData = { nip: nipValue, password: passwordValue };
     await axios
-      .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/register`, formData)
+      .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/login`, formData)
       .then((res) => {
         setIsLoading(false);
 
@@ -75,25 +56,13 @@ const register = () => {
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
-        Alert.alert(
-          "Success!",
-          "Your account has been created.",
-          [
-            {
-              text: "Oke",
-              onPress: () => router.replace("/"),
-            },
-          ],
-          {
-            cancelable: false,
-          }
-        );
+        router.replace("/(tabs)/dashboard");
       })
       .catch((err) => {
         setIsLoading(false);
 
-        if (err.response.data.errors.nip)
-          return Alert.alert("Sorry!", err.response.data.errors.nip[0]);
+        if (err.response.data.message)
+          return Alert.alert("Opss!", err.response.data.message);
 
         return Alert.alert(
           "Sorry!",
@@ -128,30 +97,19 @@ const register = () => {
             onChangeText={(text) => setPasswordValue(text)}
           />
         </View>
-        <View style={styles.form_group}>
-          <Icon2 name="key" style={styles.icon} size={20} />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Password Confirm"
-            inputMode="text"
-            secureTextEntry={true}
-            autoCapitalize="none"
-            onChangeText={(text) => setPasswordConfirmValue(text)}
-          />
-        </View>
         <TouchableOpacity
           style={styles.button_group}
           disabled={isLoading}
           onPress={handleSubmit}
         >
           <Text style={styles.button_text}>
-            {isLoading ? "Register..." : "Register"}
+            {isLoading ? "Log In..." : "Log In"}
           </Text>
         </TouchableOpacity>
-        <Text style={styles.login_text}>
-          Punya akun?{" "}
-          <Link href={"/(auth)/login"} style={styles.login_text_link}>
-            Masuk
+        <Text style={styles.register_text}>
+          Tidak punya akun?{" "}
+          <Link href={"/auth/register"} style={styles.register_text_link}>
+            Buat Akun
           </Link>
         </Text>
       </View>
@@ -159,7 +117,7 @@ const register = () => {
   );
 };
 
-export default register;
+export default login;
 
 const styles = StyleSheet.create({
   container: {
@@ -183,8 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     padding: 5,
     borderRadius: 10,
-    marginTop: 10,
-    marginBottom: 10,
+    margin: 5,
   },
   icon: {
     padding: 5,
@@ -207,10 +164,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#FFF",
   },
-  login_text: {
+  register_text: {
     marginTop: 20,
   },
-  login_text_link: {
+  register_text_link: {
     color: "#2099FF",
     fontWeight: "900",
   },

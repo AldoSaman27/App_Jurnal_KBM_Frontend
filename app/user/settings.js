@@ -153,7 +153,7 @@ const UserSettings = () => {
           [
             {
               text: "Oke",
-              onPress: () => router.replace("/"),
+              onPress: () => router.replace("/(tabs)/dashboard"),
             },
           ],
           {

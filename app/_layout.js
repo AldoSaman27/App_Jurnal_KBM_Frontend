@@ -16,10 +16,10 @@ export default function layout() {
       await axios
         .get(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/checktoken`)
         .then(() => {
-          router.replace("/");
+          router.replace("/(tabs)/dashboard");
         })
         .catch(() => {
-          router.replace("/(auth)/login");
+          router.replace("/");
         })
         .finally(() => {
           setTimeout(() => {
@@ -33,9 +33,10 @@ export default function layout() {
 
   return (
     <Stack screenOptions={{ headerTitle: "" }}>
-      <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+      <Stack.Screen name="auth/register" options={{ headerShown: false }} />
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
 }

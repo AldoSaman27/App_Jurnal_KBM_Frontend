@@ -5,14 +5,7 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import {
-  Alert,
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from "react-native";
+import { Modal, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 
 // Components
 import fetchFromAsyncStorage from "../components/fetchFromAsyncStorage";
@@ -65,10 +58,6 @@ const index = () => {
         })
         .catch((err) => {
           setIsLoading(false);
-          Alert.alert(
-            "Sorry!",
-            "Internal Server Error. Please contact the development team!"
-          );
         });
     };
 

@@ -1,28 +1,27 @@
 import axios from "axios";
 import Icon1 from "react-native-vector-icons/Ionicons";
 import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
-import Icon3 from "react-native-vector-icons/FontAwesome";
-import Icon4 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
 import { Link, router } from "expo-router";
+import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   Alert,
 } from "react-native";
 
-const register = () => {
+const login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-  const [nameValue, setNameValue] = useState("");
-  const [nipValue, setNipValue] = useState("");
-  const [mapelValue, setMapelValue] = useState("");
+
+  useEffect(() => {
+    AsyncStorage.clear();
+  }, []);
 
   const handleSubmit = async () => {
     if (
@@ -39,40 +38,13 @@ const register = () => {
       passwordValue === undefined
     ) {
       return Alert.alert("Opss!", "Password is required!");
-    } else if (
-      nameValue === "" ||
-      nameValue.length === 0 ||
-      nameValue === null ||
-      nameValue === undefined
-    ) {
-      return Alert.alert("Opss!", "Name is required!");
-    } else if (
-      nipValue === "" ||
-      nipValue.length < 18 ||
-      nipValue === null ||
-      nipValue === undefined
-    ) {
-      return Alert.alert("Opss!", "NIP is required or NIP must be 18 digits!");
-    } else if (
-      mapelValue === "" ||
-      mapelValue.length === 0 ||
-      mapelValue === null ||
-      mapelValue === undefined
-    ) {
-      return Alert.alert("Opss!", "Mapel is required!");
     }
 
     setIsLoading(true);
 
-    const formData = {
-      email: emailValue,
-      password: passwordValue,
-      name: nameValue,
-      nip: nipValue,
-      mapel: mapelValue,
-    };
+    const formData = { email: emailValue, password: passwordValue };
     await axios
-      .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/register`, formData)
+      .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/login`, formData)
       .then((res) => {
         setIsLoading(false);
 
@@ -86,27 +58,13 @@ const register = () => {
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
-        Alert.alert(
-          "Success!",
-          "Your account has been created.",
-          [
-            {
-              text: "Oke",
-              onPress: () => router.replace("/"),
-            },
-          ],
-          {
-            cancelable: false,
-          }
-        );
+        router.replace("/");
       })
       .catch((err) => {
         setIsLoading(false);
 
-        if (err.response.data.errors.email)
-          return Alert.alert("Sorry!", err.response.data.errors.email[0]);
-        else if (err.response.data.errors.nip)
-          return Alert.alert("Sorry!", err.response.data.errors.nip[0]);
+        if (err.response.data.message)
+          return Alert.alert("Opss!", err.response.data.message);
 
         return Alert.alert(
           "Sorry!",
@@ -120,7 +78,6 @@ const register = () => {
     <SafeAreaProvider>
       <View style={styles.container}>
         <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
-        <Text style={styles.heading_text}>Account Information</Text>
         <View style={styles.form_group}>
           <Icon2 name="email" style={styles.icon} size={20} color="#000" />
           <TextInput
@@ -142,50 +99,19 @@ const register = () => {
             onChangeText={(text) => setPasswordValue(text)}
           />
         </View>
-        <Text style={styles.heading_text}>Personal Information</Text>
-        <View style={styles.form_group}>
-          <Icon3 name="user" style={styles.icon} size={20} color="#000" />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Name"
-            inputMode="text"
-            autoCapitalize="none"
-            onChangeText={(text) => setNameValue(text)}
-          />
-        </View>
-        <View style={styles.form_group}>
-          <Icon4 name="text-snippet" style={styles.icon} size={20} />
-          <TextInput
-            style={styles.input_group}
-            placeholder="NIP"
-            inputMode="numeric"
-            autoCapitalize="none"
-            onChangeText={(text) => setNipValue(text)}
-          />
-        </View>
-        <View style={styles.form_group}>
-          <Icon4 name="subject" style={styles.icon} size={20} color="#000" />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Mapel"
-            inputMode="text"
-            autoCapitalize="none"
-            onChangeText={(text) => setMapelValue(text)}
-          />
-        </View>
         <TouchableOpacity
           style={styles.button_group}
           disabled={isLoading}
           onPress={handleSubmit}
         >
           <Text style={styles.button_text}>
-            {isLoading ? "Please Wait..." : "Register"}
+            {isLoading ? "Please Wait..." : "Log In"}
           </Text>
         </TouchableOpacity>
-        <Text style={styles.login_text}>
-          Punya akun?{" "}
-          <Link href={"/login"} style={styles.login_text_link}>
-            Masuk
+        <Text style={styles.register_text}>
+          Tidak punya akun?{" "}
+          <Link href={"/(auth)/register"} style={styles.register_text_link}>
+            Buat Akun
           </Link>
         </Text>
       </View>
@@ -193,7 +119,7 @@ const register = () => {
   );
 };
 
-export default register;
+export default login;
 
 const styles = StyleSheet.create({
   container: {
@@ -203,11 +129,6 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginBottom: 20,
-  },
-  heading_text: {
-    width: "90%",
-    fontWeight: "900",
-    marginBottom: 10,
   },
   input_group: {
     backgroundColor: "#FFF",
@@ -245,10 +166,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#FFF",
   },
-  login_text: {
+  register_text: {
     marginTop: 20,
   },
-  login_text_link: {
+  register_text_link: {
     color: "#2099FF",
     fontWeight: "900",
   },

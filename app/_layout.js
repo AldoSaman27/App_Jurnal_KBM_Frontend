@@ -1,23 +1,30 @@
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, router } from "expo-router";
 import { useEffect } from "react";
+import { Stack, SplashScreen, router } from "expo-router";
 import fetchFromAsyncStorage from "../components/fetchFromAsyncStorage";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function layout() {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedData = await fetchFromAsyncStorage();
+      const accessToken = fetchedData.accessToken;
 
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${fetchedData.accessToken}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       axios.defaults.headers.common["Accept"] = `application/json`;
       await axios
         .get(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/checktoken`)
+        .then(() => {
+          router.replace("/");
+        })
         .catch(() => {
-          if (fetchedData.accessToken) AsyncStorage.clear();
-          return router.replace("/login");
+          router.replace("/(auth)/login");
+        })
+        .finally(() => {
+          setTimeout(() => {
+            SplashScreen.hideAsync();
+          }, 2500);
         });
     };
 
@@ -26,9 +33,9 @@ export default function layout() {
 
   return (
     <Stack screenOptions={{ headerTitle: "" }}>
+      <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="login" options={{ headerShown: false }} />
-      <Stack.Screen name="register" options={{ headerShown: false }} />
     </Stack>
   );
 }

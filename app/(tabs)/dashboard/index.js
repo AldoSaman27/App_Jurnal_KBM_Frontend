@@ -2,7 +2,7 @@ import Icon1 from "react-native-vector-icons/MaterialIcons";
 import Icon2 from "react-native-vector-icons/FontAwesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Image } from "expo-image";
-import { Link, Tabs } from "expo-router";
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Modal, Text, TouchableOpacity, View, StyleSheet } from "react-native";
@@ -58,6 +58,11 @@ const dashboard = () => {
         })
         .catch((err) => {
           setIsLoading(false);
+
+          return Alert.alert(
+            "Sorry!",
+            "Internal Server Error. Please contact the development team!"
+          );
         });
     };
 

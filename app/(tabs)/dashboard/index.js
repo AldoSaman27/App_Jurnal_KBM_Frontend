@@ -83,11 +83,13 @@ const dashboard = () => {
       <View style={styles.container}>
         <View style={styles.user_container}>
           <Image
-            source={`${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${foto}`}
+            source={`${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${
+              foto || "User_Profile.png"
+            }`}
             style={styles.user_image}
           />
           <View style={styles.user_info}>
-            <Text style={styles.user_name}>{name}</Text>
+            <Text style={styles.user_name}>{name || `User #${id}`}</Text>
             <View style={styles.user_line}></View>
             <Text style={styles.user_nip}>{nip}</Text>
           </View>
@@ -95,7 +97,7 @@ const dashboard = () => {
         <View style={styles.menu_container}>
           <View style={styles.menu_item}>
             <TouchableOpacity style={styles.jurnal_button}>
-              <Link style={styles.jurnal_button_text} href="/">
+              <Link style={styles.jurnal_button_text} href="/jurnal/buat">
                 <Icon2 name="plus-circle" size={30} />
               </Link>
             </TouchableOpacity>

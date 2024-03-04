@@ -1,6 +1,6 @@
 import axios from "axios";
 import Icon1 from "react-native-vector-icons/Ionicons";
-import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon2 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -16,33 +16,32 @@ import {
 
 const login = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [emailValue, setEmailValue] = useState("");
+  const [nipValue, setNipValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
-
-  useEffect(() => {
-    AsyncStorage.clear();
-  }, []);
 
   const handleSubmit = async () => {
     if (
-      emailValue === "" ||
-      emailValue.length === 0 ||
-      emailValue === null ||
-      emailValue === undefined
+      nipValue === "" ||
+      nipValue.length < 18 ||
+      nipValue === null ||
+      nipValue === undefined
     ) {
-      return Alert.alert("Opss!", "Email is required!");
+      return Alert.alert("Opss!", "NIP is required or NIP must be 18 digits!");
     } else if (
       passwordValue === "" ||
-      passwordValue.length === 0 ||
+      passwordValue.length < 5 ||
       passwordValue === null ||
       passwordValue === undefined
     ) {
-      return Alert.alert("Opss!", "Password is required!");
+      return Alert.alert(
+        "Opss!",
+        "Password is required or Password must be 5 letters!"
+      );
     }
 
     setIsLoading(true);
 
-    const formData = { email: emailValue, password: passwordValue };
+    const formData = { nip: nipValue, password: passwordValue };
     await axios
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/login`, formData)
       .then((res) => {
@@ -54,7 +53,6 @@ const login = () => {
         AsyncStorage.setItem("nip", res.data.user.nip);
         AsyncStorage.setItem("mapel", res.data.user.mapel);
         AsyncStorage.setItem("foto", res.data.user.foto);
-        AsyncStorage.setItem("email", res.data.user.email);
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
@@ -79,17 +77,17 @@ const login = () => {
       <View style={styles.container}>
         <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
         <View style={styles.form_group}>
-          <Icon2 name="email" style={styles.icon} size={20} color="#000" />
+          <Icon2 name="text-snippet" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
-            placeholder="Email"
-            inputMode="email"
+            placeholder="NIP"
+            inputMode="numeric"
             autoCapitalize="none"
-            onChangeText={(text) => setEmailValue(text)}
+            onChangeText={(text) => setNipValue(text)}
           />
         </View>
         <View style={styles.form_group}>
-          <Icon2 name="key" style={styles.icon} size={20} color="#000" />
+          <Icon2 name="key" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="Password"
@@ -105,7 +103,7 @@ const login = () => {
           onPress={handleSubmit}
         >
           <Text style={styles.button_text}>
-            {isLoading ? "Please Wait..." : "Log In"}
+            {isLoading ? "Log In..." : "Log In"}
           </Text>
         </TouchableOpacity>
         <Text style={styles.register_text}>

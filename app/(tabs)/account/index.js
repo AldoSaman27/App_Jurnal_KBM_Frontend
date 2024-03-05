@@ -1,9 +1,11 @@
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+// Icon
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 // Components
 import fetchFromAsyncStorage from "../../../components/fetchFromAsyncStorage";

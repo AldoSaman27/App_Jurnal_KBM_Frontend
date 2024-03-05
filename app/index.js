@@ -1,15 +1,11 @@
 import { Link } from "expo-router";
-import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+
+// Icon
 import Ionicons from "react-native-vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const index = () => {
-  useEffect(() => {
-    AsyncStorage.clear();
-  }, [AsyncStorage]);
-
   return (
     <SafeAreaProvider>
       <View style={styles.container}>

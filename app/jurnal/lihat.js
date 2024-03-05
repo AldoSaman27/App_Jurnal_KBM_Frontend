@@ -91,15 +91,19 @@ const LihatJurnal = () => {
   };
 
   const handleDelete = async (id) => {
-    Alert.alert("Opss..", "Are you sure you want to delete this journal?", [
-      {
-        text: "Oke",
-        onPress: () => handleDeleteConfirm(id),
-      },
-      {
-        text: "Cancel",
-      },
-    ]);
+    Alert.alert(
+      "Are you sure?",
+      "Are you sure you want to delete this journal?",
+      [
+        {
+          text: "Yes",
+          onPress: () => handleDeleteConfirm(id),
+        },
+        {
+          text: "No",
+        },
+      ]
+    );
     return 1;
   };
 

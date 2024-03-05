@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
-import Icon1 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -14,6 +13,9 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+
+// Icon
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 // Components
 import fetchFromAsyncStorage from "../../components/fetchFromAsyncStorage";
@@ -138,19 +140,12 @@ const UserEdit = () => {
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
-        Alert.alert(
-          "Success!",
-          "Profile has been updated.",
-          [
-            {
-              text: "Oke",
-              onPress: () => router.replace("/(tabs)/dashboard"),
-            },
-          ],
+        Alert.alert("Success!", "Profile has been updated.", [
           {
-            cancelable: false,
-          }
-        );
+            text: "Oke",
+            onPress: () => router.replace("/(tabs)/dashboard"),
+          },
+        ]);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -170,11 +165,20 @@ const UserEdit = () => {
         <View style={styles.image_container}>
           <Image source={imagePreview} style={styles.user_image} />
           <TouchableOpacity style={styles.button_image} onPress={pickImage}>
-            <Icon1 name="photo-camera" style={styles.btn_img_icon} size={20} />
+            <MaterialIcons
+              name="photo-camera"
+              style={styles.btn_img_icon}
+              size={20}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.form_group}>
-          <Icon1 name="person" style={styles.icon} size={20} color="#000" />
+          <MaterialIcons
+            name="person"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Name"
@@ -185,7 +189,7 @@ const UserEdit = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon1 name="text-snippet" style={styles.icon} size={20} />
+          <MaterialIcons name="text-snippet" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="NIP"
@@ -197,7 +201,12 @@ const UserEdit = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon1 name="subject" style={styles.icon} size={20} color="#000" />
+          <MaterialIcons
+            name="subject"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Mapel"
@@ -213,7 +222,7 @@ const UserEdit = () => {
           onPress={handleSubmit}
         >
           <Text style={styles.button_text}>
-            {isLoading ? "Please Wait..." : "Submit"}
+            {isLoading ? "Submit..." : "Submit"}
           </Text>
         </TouchableOpacity>
       </View>

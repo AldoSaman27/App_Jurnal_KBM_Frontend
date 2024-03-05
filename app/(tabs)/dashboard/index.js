@@ -1,11 +1,13 @@
-import Icon1 from "react-native-vector-icons/MaterialIcons";
-import Icon2 from "react-native-vector-icons/FontAwesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Modal, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+
+// Icon
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 // Components
 import fetchFromAsyncStorage from "../../../components/fetchFromAsyncStorage";
@@ -103,7 +105,7 @@ const dashboard = () => {
           <View style={styles.menu_item}>
             <TouchableOpacity style={styles.jurnal_button}>
               <Link style={styles.jurnal_button_text} href="/jurnal/buat">
-                <Icon2 name="plus-circle" size={30} />
+                <FontAwesome name="plus-circle" size={30} />
               </Link>
             </TouchableOpacity>
             <Text style={styles.jurnal_text}>Buat Jurnal</Text>
@@ -111,7 +113,7 @@ const dashboard = () => {
           <View style={styles.menu_item}>
             <TouchableOpacity style={styles.jurnal_button}>
               <Link style={styles.jurnal_button_text} href="/jurnal/lihat">
-                <Icon2 name="eye" size={30} />
+                <FontAwesome name="eye" size={30} />
               </Link>
             </TouchableOpacity>
             <Text style={styles.jurnal_text}>Lihat Jurnal</Text>
@@ -122,7 +124,7 @@ const dashboard = () => {
               onPress={() => setModalShow(true)}
             >
               <Text style={styles.jurnal_button_text}>
-                <Icon2 name="download" size={30} />
+                <FontAwesome name="download" size={30} />
               </Text>
             </TouchableOpacity>
             <Text style={styles.jurnal_text}>Unduh Jurnal</Text>
@@ -134,14 +136,14 @@ const dashboard = () => {
             <View style={styles.modal_container}>
               <View style={styles.modal_header}>
                 <Text style={styles.modal_title}>Unduh Jurnal</Text>
-                <Icon1
+                <MaterialIcons
                   name="close"
                   size={30}
                   onPress={() => setModalShow(false)}
                 />
               </View>
               <View style={styles.form_group}>
-                <Icon2
+                <FontAwesome
                   name="calendar"
                   style={styles.icon}
                   size={20}

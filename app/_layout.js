@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { Stack, SplashScreen, router } from "expo-router";
+
+// Components
 import fetchFromAsyncStorage from "../components/fetchFromAsyncStorage";
 
 SplashScreen.preventAutoHideAsync();

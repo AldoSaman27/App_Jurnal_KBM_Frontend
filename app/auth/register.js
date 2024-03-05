@@ -1,6 +1,4 @@
 import axios from "axios";
-import Icon1 from "react-native-vector-icons/Ionicons";
-import Icon2 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { Link, router } from "expo-router";
@@ -13,6 +11,10 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+
+// Icon
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const register = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,10 +59,7 @@ const register = () => {
 
     setIsLoading(true);
 
-    const formData = {
-      nip: nipValue,
-      password: passwordValue,
-    };
+    const formData = { nip: nipValue, password: passwordValue };
     await axios
       .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/register`, formData)
       .then((res) => {
@@ -75,19 +74,12 @@ const register = () => {
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
-        Alert.alert(
-          "Success!",
-          "Your account has been created.",
-          [
-            {
-              text: "Oke",
-              onPress: () => router.replace("/(tabs)/dashboard"),
-            },
-          ],
+        Alert.alert("Success!", "Your account has been created.", [
           {
-            cancelable: false,
-          }
-        );
+            text: "Oke",
+            onPress: () => router.replace("/(tabs)/dashboard"),
+          },
+        ]);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -106,9 +98,14 @@ const register = () => {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
+        <Ionicons
+          name="journal"
+          size={100}
+          color="#2099FF"
+          style={styles.logo}
+        />
         <View style={styles.form_group}>
-          <Icon2 name="text-snippet" style={styles.icon} size={20} />
+          <MaterialIcons name="text-snippet" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="NIP"
@@ -118,7 +115,7 @@ const register = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon2 name="key" style={styles.icon} size={20} />
+          <MaterialIcons name="key" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="Password"
@@ -129,7 +126,7 @@ const register = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon2 name="key" style={styles.icon} size={20} />
+          <MaterialIcons name="key" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="Password Confirm"

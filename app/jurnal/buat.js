@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
-import Icon from "react-native-vector-icons/FontAwesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -14,6 +13,9 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+
+// Icon
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 // Components
 import fetchFromAsyncStorage from "../../components/fetchFromAsyncStorage";
@@ -35,8 +37,8 @@ const BuatJurnal = () => {
   });
   const [date, setDate] = useState(new Date());
   const [dateShow, setDateShow] = useState(false);
-  const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const [jamPembelajaran, setJamPembelajaran] = useState("");
   const [kelas, setKelas] = useState("");
@@ -80,8 +82,8 @@ const BuatJurnal = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
       setImageFile(result.assets[0]);
+      setImagePreview(result.assets[0].uri);
     }
   };
 
@@ -135,7 +137,7 @@ const BuatJurnal = () => {
       siswaIzin === undefined
     ) {
       return Alert.alert("Opss!", "Siswa Izin is required!");
-    } else if (!image) {
+    } else if (!imageFile) {
       return Alert.alert("Opss!", "Foto Kegiatan is required!");
     }
 
@@ -157,7 +159,7 @@ const BuatJurnal = () => {
       `${siswaHadir} Hadir, ${siswaTanpaKabar} Tanpa Kabar, ${siswaSakit} Sakit, ${siswaIzin} Izin`
     );
     formData.append("foto_kegiatan", {
-      uri: image,
+      uri: imageFile.uri,
       name: imageFile.fileName,
       type: imageFile.mimeType,
     });
@@ -170,24 +172,15 @@ const BuatJurnal = () => {
       .then(() => {
         setIsLoading(false);
 
-        Alert.alert(
-          "Success!",
-          "Jurnal has been created successfully!",
-          [
-            {
-              text: "Oke",
-              onPress: () => router.replace("/"),
-            },
-          ],
+        Alert.alert("Success!", "Jurnal has been created successfully.", [
           {
-            cancelable: false,
-          }
-        );
+            text: "Oke",
+            onPress: () => router.replace("/(tabs)/dashboard"),
+          },
+        ]);
       })
       .catch((err) => {
         setIsLoading(false);
-
-        console.log(err);
 
         return Alert.alert(
           "Sorry!",
@@ -202,13 +195,23 @@ const BuatJurnal = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Buat Jurnal</Text>
         <View style={styles.form_group}>
-          <Icon name="calendar" style={styles.icon} size={20} color="#000" />
+          <FontAwesome
+            name="calendar"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <Text style={styles.input_group} onPress={() => setDateShow(true)}>
             {getFormattedDate(date)}
           </Text>
         </View>
         <View style={styles.form_group}>
-          <Icon name="clock-o" style={styles.icon} size={20} color="#000" />
+          <FontAwesome
+            name="clock-o"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Jam Pembelajaran"
@@ -216,7 +219,12 @@ const BuatJurnal = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon name="building" style={styles.icon} size={20} color="#000" />
+          <FontAwesome
+            name="building"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Kelas"
@@ -225,7 +233,7 @@ const BuatJurnal = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon name="list" style={styles.icon} size={20} color="#000" />
+          <FontAwesome name="list" style={styles.icon} size={20} color="#000" />
           <TextInput
             style={styles.input_group}
             placeholder="Uraian Kegiatan"
@@ -233,7 +241,12 @@ const BuatJurnal = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon name="users" style={styles.icon} size={20} color="#000" />
+          <FontAwesome
+            name="users"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Hadir"
@@ -242,7 +255,12 @@ const BuatJurnal = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon name="user-times" style={styles.icon} size={20} color="#000" />
+          <FontAwesome
+            name="user-times"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Tanpa Kabar"
@@ -251,7 +269,7 @@ const BuatJurnal = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon name="user-md" style={styles.icon_user_md} size={23} />
+          <FontAwesome name="user-md" style={styles.icon_user_md} size={23} />
           <TextInput
             style={styles.input_group}
             placeholder="Sakit"
@@ -260,7 +278,11 @@ const BuatJurnal = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon name="user-plus" style={styles.icon_user_plus} size={20} />
+          <FontAwesome
+            name="user-plus"
+            style={styles.icon_user_plus}
+            size={20}
+          />
           <TextInput
             style={styles.input_group}
             placeholder="Izin"
@@ -272,7 +294,9 @@ const BuatJurnal = () => {
           <Text style={styles.button_text}>Pilih Foto Kegiatan</Text>
         </TouchableOpacity>
 
-        {image && <Image source={{ uri: image }} style={styles.pick_image} />}
+        {imagePreview && (
+          <Image source={{ uri: imagePreview }} style={styles.pick_image} />
+        )}
 
         <TouchableOpacity
           style={styles.button}
@@ -280,7 +304,7 @@ const BuatJurnal = () => {
           disabled={isLoading}
         >
           <Text style={styles.button_text}>
-            {isLoading ? "Please Wait..." : "Submit"}
+            {isLoading ? "Submit..." : "Submit"}
           </Text>
         </TouchableOpacity>
 

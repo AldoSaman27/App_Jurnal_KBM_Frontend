@@ -1,9 +1,7 @@
 import axios from "axios";
-import Icon1 from "react-native-vector-icons/Ionicons";
-import Icon2 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 import { Link, router } from "expo-router";
-import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   View,
@@ -13,6 +11,10 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+
+// Icon
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -75,9 +77,14 @@ const login = () => {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Icon1 name="journal" size={100} color="#2099FF" style={styles.logo} />
+        <Ionicons
+          name="journal"
+          size={100}
+          color="#2099FF"
+          style={styles.logo}
+        />
         <View style={styles.form_group}>
-          <Icon2 name="text-snippet" style={styles.icon} size={20} />
+          <MaterialIcons name="text-snippet" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="NIP"
@@ -87,7 +94,7 @@ const login = () => {
           />
         </View>
         <View style={styles.form_group}>
-          <Icon2 name="key" style={styles.icon} size={20} />
+          <MaterialIcons name="key" style={styles.icon} size={20} />
           <TextInput
             style={styles.input_group}
             placeholder="Password"

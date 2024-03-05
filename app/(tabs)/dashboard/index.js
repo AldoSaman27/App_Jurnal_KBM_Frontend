@@ -323,9 +323,9 @@ const styles = StyleSheet.create({
   jurnal_button_unduh: {
     backgroundColor: "#2099FF",
     width: "100%",
-    maxHeight: 50,
+    height: 50,
     borderRadius: 10,
-    flex: 1,
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,

@@ -1,8 +1,11 @@
+import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import Icon1 from "react-native-vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   View,
   StyleSheet,
@@ -14,9 +17,6 @@ import {
 
 // Components
 import fetchFromAsyncStorage from "../../components/fetchFromAsyncStorage";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import axios from "axios";
-import { router } from "expo-router";
 
 const FormData = global.FormData;
 
@@ -45,12 +45,11 @@ const UserEdit = () => {
     updated_at,
   } = storageData;
 
-  const [image, setImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [nameValue, setNameValue] = useState("");
   const [nipValue, setNipValue] = useState("");
   const [mapelValue, setMapelValue] = useState("");
-  const [emailValue, setEmailValue] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -59,13 +58,14 @@ const UserEdit = () => {
       const fetchedData = await fetchFromAsyncStorage();
       setStorageData(fetchedData);
 
-      setImage(
-        `${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${fetchedData.foto}`
+      setImagePreview(
+        `${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${
+          fetchedData.foto || "User_Profile.png"
+        }`
       );
       setNameValue(fetchedData.name);
       setNipValue(fetchedData.nip);
       setMapelValue(fetchedData.mapel);
-      setEmailValue(fetchedData.email);
     };
 
     fetchData();
@@ -77,23 +77,23 @@ const UserEdit = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
       setImageFile(result.assets[0]);
+      setImagePreview(result.assets[0].uri);
     }
   };
 
   const handleSubmit = async () => {
     if (
       nameValue === "" ||
-      nameValue.length === 0 ||
       nameValue === null ||
+      nameValue.length === 0 ||
       nameValue === undefined
     ) {
       return Alert.alert("Opss!", "Name is required!");
     } else if (
       nipValue === "" ||
-      nipValue.length < 18 ||
       nipValue === null ||
+      nipValue.length < 18 ||
       nipValue === undefined
     ) {
       return Alert.alert("Opss!", "NIP is required or NIP must be 18 digits!");
@@ -104,13 +104,6 @@ const UserEdit = () => {
       mapelValue === undefined
     ) {
       return Alert.alert("Opss!", "Mapel is required!");
-    } else if (
-      emailValue === "" ||
-      emailValue.length === 0 ||
-      emailValue === null ||
-      emailValue === undefined
-    ) {
-      return Alert.alert("Opss!", "Email is required!");
     }
 
     setIsLoading(true);
@@ -118,21 +111,20 @@ const UserEdit = () => {
     const formData = new FormData();
     if (imageFile)
       formData.append("foto", {
-        uri: image,
+        uri: imageFile.uri,
         name: imageFile.fileName,
         type: imageFile.mimeType,
       });
     formData.append("name", nameValue);
     formData.append("nip", nipValue);
     formData.append("mapel", mapelValue);
-    formData.append("email", emailValue);
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
     axios.defaults.headers.common["Accept"] = "application/json";
     await axios
       .post(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/auth/update/${id}`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/auth/update/${nip}`,
         formData
       )
       .then((res) => {
@@ -143,7 +135,6 @@ const UserEdit = () => {
         AsyncStorage.setItem("nip", res.data.user.nip);
         AsyncStorage.setItem("mapel", res.data.user.mapel);
         AsyncStorage.setItem("foto", res.data.user.foto);
-        AsyncStorage.setItem("email", res.data.user.email);
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
 
@@ -177,7 +168,7 @@ const UserEdit = () => {
     <SafeAreaProvider>
       <View style={styles.container}>
         <View style={styles.image_container}>
-          <Image source={image} style={styles.user_image} />
+          <Image source={imagePreview} style={styles.user_image} />
           <TouchableOpacity style={styles.button_image} onPress={pickImage}>
             <Icon1 name="photo-camera" style={styles.btn_img_icon} size={20} />
           </TouchableOpacity>
@@ -202,6 +193,7 @@ const UserEdit = () => {
             autoCapitalize="none"
             onChangeText={(text) => setNipValue(text)}
             defaultValue={nipValue}
+            editable={false}
           />
         </View>
         <View style={styles.form_group}>
@@ -213,17 +205,6 @@ const UserEdit = () => {
             autoCapitalize="none"
             onChangeText={(text) => setMapelValue(text)}
             defaultValue={mapelValue}
-          />
-        </View>
-        <View style={styles.form_group}>
-          <Icon1 name="email" style={styles.icon} size={20} color="#000" />
-          <TextInput
-            style={styles.input_group}
-            placeholder="Email"
-            inputMode="email"
-            autoCapitalize="none"
-            onChangeText={(text) => setEmailValue(text)}
-            defaultValue={emailValue}
           />
         </View>
         <TouchableOpacity

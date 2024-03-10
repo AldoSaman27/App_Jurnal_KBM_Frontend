@@ -65,14 +65,14 @@ const register = () => {
       .then((res) => {
         setIsLoading(false);
 
-        AsyncStorage.setItem("accessToken", res.data.user.accessToken);
-        AsyncStorage.setItem("id", res.data.user.id.toString());
-        AsyncStorage.setItem("name", res.data.user.name);
-        AsyncStorage.setItem("nip", res.data.user.nip);
-        AsyncStorage.setItem("mapel", res.data.user.mapel);
-        AsyncStorage.setItem("foto", res.data.user.foto);
-        AsyncStorage.setItem("created_at", res.data.user.created_at);
-        AsyncStorage.setItem("updated_at", res.data.user.updated_at);
+        AsyncStorage.setItem("accessToken", res.data.user.accessToken || "");
+        AsyncStorage.setItem("id", res.data.user.id.toString() || "");
+        AsyncStorage.setItem("name", res.data.user.name || "");
+        AsyncStorage.setItem("nip", res.data.user.nip || "");
+        AsyncStorage.setItem("mapel", res.data.user.mapel || "");
+        AsyncStorage.setItem("foto", res.data.user.foto || "");
+        AsyncStorage.setItem("created_at", res.data.user.created_at || "");
+        AsyncStorage.setItem("updated_at", res.data.user.updated_at || "");
 
         Alert.alert("Success!", "Your account has been created.", [
           {

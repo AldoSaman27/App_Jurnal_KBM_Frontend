@@ -1,3 +1,5 @@
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -22,6 +24,7 @@ const account = () => {
     created_at: null,
     updated_at: null,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     accessToken,
@@ -48,7 +51,22 @@ const account = () => {
     Alert.alert("Are you sure?", "Are you sure you want to logout?", [
       {
         text: "Yes",
-        onPress: () => router.replace("/"),
+        onPress: async () => {
+          setIsLoading(true);
+
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
+          axios.defaults.headers.common["Accept"] = `application/json`;
+          await axios
+            .post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/logout`)
+            .finally(() => {
+              setIsLoading(false);
+
+              AsyncStorage.clear();
+              return router.replace("/");
+            });
+        },
       },
       {
         text: "No",
@@ -107,7 +125,11 @@ const account = () => {
         <View style={styles.heading_container}>
           <Text style={styles.heading_text}>Utilities</Text>
         </View>
-        <TouchableOpacity style={styles.utilities} onPress={handleLogout}>
+        <TouchableOpacity
+          style={styles.utilities}
+          onPress={handleLogout}
+          disabled={isLoading}
+        >
           <View style={styles.utilities_heading}>
             <MaterialIcons name="logout" size={30} color={"#FFF"} />
             <Text style={styles.utilities_heading_text}>Log Out</Text>

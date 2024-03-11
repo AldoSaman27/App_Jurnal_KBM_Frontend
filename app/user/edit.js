@@ -29,6 +29,7 @@ const UserEdit = () => {
     name: null,
     nip: null,
     mapel: null,
+    sekolah: null,
     foto: null,
     email: null,
     created_at: null,

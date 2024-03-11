@@ -41,6 +41,7 @@ const UserEdit = () => {
     name,
     nip,
     mapel,
+    sekolah,
     foto,
     email,
     created_at,
@@ -52,6 +53,7 @@ const UserEdit = () => {
   const [nameValue, setNameValue] = useState("");
   const [nipValue, setNipValue] = useState("");
   const [mapelValue, setMapelValue] = useState("");
+  const [sekolahValue, setSekolahValue] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,6 +70,7 @@ const UserEdit = () => {
       setNameValue(fetchedData.name);
       setNipValue(fetchedData.nip);
       setMapelValue(fetchedData.mapel);
+      setSekolahValue(fetchedData.sekolah);
     };
 
     fetchData();
@@ -120,6 +123,7 @@ const UserEdit = () => {
     formData.append("name", nameValue);
     formData.append("nip", nipValue);
     formData.append("mapel", mapelValue);
+    formData.append("sekolah", sekolahValue);
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
@@ -136,6 +140,7 @@ const UserEdit = () => {
         AsyncStorage.setItem("name", res.data.user.name);
         AsyncStorage.setItem("nip", res.data.user.nip);
         AsyncStorage.setItem("mapel", res.data.user.mapel);
+        AsyncStorage.setItem("sekolah", res.data.user.sekolah);
         AsyncStorage.setItem("foto", res.data.user.foto);
         AsyncStorage.setItem("created_at", res.data.user.created_at);
         AsyncStorage.setItem("updated_at", res.data.user.updated_at);
@@ -214,6 +219,22 @@ const UserEdit = () => {
             autoCapitalize="none"
             onChangeText={(text) => setMapelValue(text)}
             defaultValue={mapelValue}
+          />
+        </View>
+        <View style={styles.form_group}>
+          <MaterialIcons
+            name="school"
+            style={styles.icon}
+            size={20}
+            color="#000"
+          />
+          <TextInput
+            style={styles.input_group}
+            placeholder="Sekolah"
+            inputMode="text"
+            autoCapitalize="none"
+            onChangeText={(text) => setSekolahValue(text)}
+            defaultValue={sekolahValue}
           />
         </View>
         <TouchableOpacity

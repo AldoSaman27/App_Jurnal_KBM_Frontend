@@ -19,6 +19,7 @@ const account = () => {
     name: null,
     nip: null,
     mapel: null,
+    sekolah: null,
     foto: null,
     email: null,
     created_at: null,
@@ -32,6 +33,7 @@ const account = () => {
     name,
     nip,
     mapel,
+    sekolah,
     foto,
     email,
     created_at,
@@ -109,16 +111,25 @@ const account = () => {
             <Text style={styles.personal_infomartion_text}>{nip}</Text>
           </View>
         </View>
+        <View style={styles.personal_infomartion}>
+          <View style={styles.personal_infomartion_heading}>
+            <MaterialIcons name="subject" size={30} color={"#2099FF"} />
+            <Text style={styles.personal_infomartion_heading_text}>Mapel</Text>
+          </View>
+          <View>
+            <Text style={styles.personal_infomartion_text}>{mapel || "-"}</Text>
+          </View>
+        </View>
         <View style={styles.personal_infomartion_2}>
           <View style={styles.personal_infomartion_2_heading}>
-            <MaterialIcons name="subject" size={30} color={"#2099FF"} />
+            <MaterialIcons name="school" size={30} color={"#2099FF"} />
             <Text style={styles.personal_infomartion_2_heading_text}>
-              Mapel
+              Sekolah
             </Text>
           </View>
           <View>
             <Text style={styles.personal_infomartion_2_text}>
-              {mapel || "-"}
+              {sekolah || "-"}
             </Text>
           </View>
         </View>
@@ -189,6 +200,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 20,
     paddingRight: 20,
+    marginBottom: 2.5,
   },
   personal_infomartion_1_heading: {
     flex: 1,
@@ -215,7 +227,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 20,
     paddingRight: 20,
-    marginVertical: 5,
+    marginVertical: 2.5,
   },
   personal_infomartion_heading: {
     flex: 1,
@@ -244,6 +256,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
+    marginTop: 2.5,
   },
   personal_infomartion_2_heading: {
     flex: 1,

@@ -111,7 +111,7 @@ const account = () => {
         </View>
         <View style={styles.personal_infomartion_2}>
           <View style={styles.personal_infomartion_2_heading}>
-            <MaterialIcons name="text-snippet" size={30} color={"#2099FF"} />
+            <MaterialIcons name="subject" size={30} color={"#2099FF"} />
             <Text style={styles.personal_infomartion_2_heading_text}>
               Mapel
             </Text>

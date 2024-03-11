@@ -68,7 +68,9 @@ const generateHTML = ({
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">NIP</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">${nip}</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${
+                            nip || "-"
+                          }</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Mata Pelajaran</td>
@@ -80,17 +82,23 @@ const generateHTML = ({
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Semester</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">${semester}</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${
+                            semester || "-"
+                          }</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Tahun Pelajaran</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">${tahunPelajaran}</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${
+                            tahunPelajaran || "-"
+                          }</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Mengampuh Di</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">${mengampuhDi}</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${
+                            mengampuhDi || "-"
+                          }</td>
                       </tr>
                   </tbody>
               </table>

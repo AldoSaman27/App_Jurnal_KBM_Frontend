@@ -3,7 +3,14 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Modal, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import {
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 
 // Icon
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -33,6 +40,8 @@ const dashboard = () => {
   const [isReload, setIsReload] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [semester, setSemester] = useState("");
+  const [tahunPelajaran, setTahunPelajaran] = useState("");
 
   const {
     accessToken,
@@ -40,6 +49,7 @@ const dashboard = () => {
     name,
     nip,
     mapel,
+    sekolah,
     foto,
     email,
     created_at,
@@ -81,7 +91,16 @@ const dashboard = () => {
 
   const onUnduhJurnal = async () => {
     setModalShow(false);
-    await generatePdf(foto, name, nip, mapel, jurnal);
+    await generatePdf(
+      foto,
+      name,
+      nip,
+      mapel,
+      jurnal,
+      semester,
+      tahunPelajaran,
+      sekolah
+    );
     return 1;
   };
 
@@ -155,6 +174,34 @@ const dashboard = () => {
                 >
                   {getFormattedDate(date)}
                 </Text>
+              </View>
+              <View style={styles.form_group}>
+                <FontAwesome
+                  name="list"
+                  style={styles.icon}
+                  size={20}
+                  color="#000"
+                />
+                <TextInput
+                  style={styles.input_group}
+                  placeholder="Semester"
+                  placeholderTextColor="#999"
+                  onChangeText={(text) => setSemester(text)}
+                />
+              </View>
+              <View style={styles.form_group}>
+                <FontAwesome
+                  name="list"
+                  style={styles.icon}
+                  size={20}
+                  color="#000"
+                />
+                <TextInput
+                  style={styles.input_group}
+                  placeholder="Tahun Pelajaran"
+                  placeholderTextColor="#999"
+                  onChangeText={(text) => setTahunPelajaran(text)}
+                />
               </View>
               <TouchableOpacity
                 style={styles.jurnal_button_unduh}
@@ -280,7 +327,7 @@ const styles = StyleSheet.create({
   },
   modal_container: {
     width: "90%",
-    height: "20%",
+    height: 285,
     backgroundColor: "#FFF",
     borderRadius: 20,
     paddingVertical: 15,
@@ -312,8 +359,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAEAEA",
     padding: 5,
     borderRadius: 10,
-    marginTop: 10,
-    marginBottom: 10,
+    marginVertical: 5,
   },
   icon: {
     padding: 5,
@@ -328,7 +374,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginVertical: 10,
   },
   jurnal_button_unduh_text: {
     fontSize: 15,

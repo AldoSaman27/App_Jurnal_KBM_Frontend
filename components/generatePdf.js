@@ -2,7 +2,16 @@ import { Alert } from "react-native";
 import { shareAsync } from "expo-sharing";
 import { printToFileAsync } from "expo-print";
 
-const generateHTML = ({ foto, name, nip, mapel, jurnal }) => {
+const generateHTML = ({
+  foto,
+  name,
+  nip,
+  mapel,
+  jurnal,
+  semester,
+  tahunPelajaran,
+  mengampuhDi,
+}) => {
   const jurnalRows = jurnal
     .map((item, index) => {
       const [year, month, day] = item.hari_tanggal.split("-");
@@ -44,13 +53,17 @@ const generateHTML = ({ foto, name, nip, mapel, jurnal }) => {
       <body>
           <h1 class="text-center mb-4">Jurnal KBM Guru</h1>
           <div class="d-flex gap-4">
-              <img src="${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${foto}" alt="" class="rounded-circle border border-5 border-primary" style="width: 200px; height: 200px; object-fit: cover; aspect-ratio: 1 / 1;">
+              <img src="${process.env.EXPO_PUBLIC_API_URL}/uploads/foto/${
+    foto || "User_Profile.png"
+  }" alt="" class="rounded-circle border border-5 border-primary" style="width: 200px; height: 200px; object-fit: cover; aspect-ratio: 1 / 1;">
               <table>
                   <tbody>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Nama</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">${name}</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${
+                            name || "-"
+                          }</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">NIP</td>
@@ -60,22 +73,24 @@ const generateHTML = ({ foto, name, nip, mapel, jurnal }) => {
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Mata Pelajaran</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">${mapel}</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${
+                            mapel || "-"
+                          }</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Semester</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">-</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${semester}</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Tahun Pelajaran</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">-</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${tahunPelajaran}</td>
                       </tr>
                       <tr>
                           <td style="padding: 5px 10px; font-weight: bold;">Mengampuh Di</td>
                           <td style="padding: 5px 10px; font-weight: bold;">:</td>
-                          <td style="padding: 5px 10px; font-weight: bold;">-</td>
+                          <td style="padding: 5px 10px; font-weight: bold;">${mengampuhDi}</td>
                       </tr>
                   </tbody>
               </table>
@@ -102,7 +117,16 @@ const generateHTML = ({ foto, name, nip, mapel, jurnal }) => {
     `;
 };
 
-const generatePdf = async (foto, name, nip, mapel, jurnal) => {
+const generatePdf = async (
+  foto,
+  name,
+  nip,
+  mapel,
+  jurnal,
+  semester,
+  tahunPelajaran,
+  mengampuhDi
+) => {
   try {
     const html = generateHTML({
       foto: foto,
@@ -110,6 +134,9 @@ const generatePdf = async (foto, name, nip, mapel, jurnal) => {
       nip: nip,
       mapel: mapel,
       jurnal: jurnal,
+      semester: semester,
+      tahunPelajaran: tahunPelajaran,
+      mengampuhDi: mengampuhDi,
     });
 
     const file = await printToFileAsync({

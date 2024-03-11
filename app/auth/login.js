@@ -54,6 +54,7 @@ const login = () => {
         AsyncStorage.setItem("name", res.data.user.name || "");
         AsyncStorage.setItem("nip", res.data.user.nip || "");
         AsyncStorage.setItem("mapel", res.data.user.mapel || "");
+        AsyncStorage.setItem("sekolah", res.data.user.sekolah || "");
         AsyncStorage.setItem("foto", res.data.user.foto || "");
         AsyncStorage.setItem("created_at", res.data.user.created_at || "");
         AsyncStorage.setItem("updated_at", res.data.user.updated_at || "");

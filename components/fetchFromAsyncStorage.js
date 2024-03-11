@@ -6,6 +6,7 @@ const fetchFromAsyncStorage = async () => {
   const fetchName = await AsyncStorage.getItem("name");
   const fetchNip = await AsyncStorage.getItem("nip");
   const fetchMapel = await AsyncStorage.getItem("mapel");
+  const fetchSekolah = await AsyncStorage.getItem("sekolah");
   const fetchFoto = await AsyncStorage.getItem("foto");
   const fetchEmail = await AsyncStorage.getItem("email");
   const fetchCreated_at = await AsyncStorage.getItem("created_at");
@@ -17,6 +18,7 @@ const fetchFromAsyncStorage = async () => {
     name: fetchName,
     nip: fetchNip,
     mapel: fetchMapel,
+    sekolah: fetchSekolah,
     foto: fetchFoto,
     email: fetchEmail,
     created_at: fetchCreated_at,

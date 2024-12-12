@@ -1,49 +1,49 @@
 {
-  "expo": {
-    "name": "Jurnal",
-    "slug": "jurnal",
-    "scheme": "jurnal",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.aldosaman.jurnal"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Apakah Anda ingin memberikan izin kepada aplikasi untuk mengakses file?"
-        }
-      ]
-    ],
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "63cdd97e-71e8-450b-8b0a-ab4331244ed2"
-      }
-    },
-    "owner": "aldosaman",
-    "newArchEnabled": true
-  }
+    "expo": {
+        "name": "Jurnal",
+        "slug": "jurnal",
+        "scheme": "jurnal",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.aldosaman.jurnal"
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            "expo-router",
+            [
+                "expo-image-picker",
+                {
+                    "photosPermission": "Apakah Anda ingin memberikan izin kepada aplikasi untuk mengakses file?"
+                }
+            ]
+        ],
+        "extra": {
+            "router": {
+                "origin": false
+            },
+            "eas": {
+                "projectId": "63cdd97e-71e8-450b-8b0a-ab4331244ed2"
+            }
+        },
+        "owner": "aldosaman",
+        "newArchEnabled": true
+    }
 }

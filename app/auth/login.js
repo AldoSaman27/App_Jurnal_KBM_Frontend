@@ -19,15 +19,15 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "reac
 // Ionicons
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-// MaterialIcons
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
 const FormData = global.FormData;
 
 const login = () => {
     const [isLoading, setIsLoading] = useState(false);
+
     const [nipValue, setNipValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
+
+    const [passwordShow, setpasswordShow] = useState(true);
 
     const handleSubmit = async () => {
         if (nipValue === "" || nipValue.length < 18 || nipValue === null || nipValue === undefined) {
@@ -82,14 +82,19 @@ const login = () => {
             <View style={styles.container}>
                 <Ionicons name="journal" size={100} color="#2099FF" style={styles.logo} />
                 
-                <View style={styles.form_group}>
-                    <MaterialIcons name="text-snippet" style={styles.icon} size={20} />
-                    <TextInput style={styles.input_group} placeholder="NIP" inputMode="numeric" autoCapitalize="none" onChangeText={(text) => setNipValue(text)} />
+                <View style={styles.input_group}>
+                    <Text style={styles.input_group_text}>NIP</Text>
+                    <View style={styles.form_group}>
+                        <TextInput style={styles.form_group_input} placeholder="Masukkan NIP" inputMode="numeric" autoCapitalize="none" onChangeText={(text) => setNipValue(text)} />
+                    </View>
                 </View>
-
-                <View style={styles.form_group}>
-                    <MaterialIcons name="key" style={styles.icon} size={20} />
-                    <TextInput style={styles.input_group} placeholder="Password" inputMode="text" secureTextEntry={true} autoCapitalize="none" onChangeText={(text) => setPasswordValue(text)} />
+                
+                <View style={styles.input_group}>
+                    <Text style={styles.input_group_text}>Password</Text>
+                    <View style={styles.form_group}>
+                        <TextInput style={styles.form_group_input} placeholder="Masukkan Password" inputMode="text" secureTextEntry={passwordShow} autoCapitalize="none" onChangeText={(text) => setPasswordValue(text)} />
+                        <Ionicons name={passwordShow ? "eye-off" : "eye"} style={styles.icon} size={20} onPress={() => setpasswordShow(!passwordShow)} />
+                    </View>
                 </View>
 
                 <TouchableOpacity style={styles.button_group} disabled={isLoading} onPress={handleSubmit}>
@@ -119,19 +124,27 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     input_group: {
-        backgroundColor: "#FFF",
-        padding: 5,
-        width: "85%",
+        width: "90%",
+        marginBottom: 5,
+    },
+    input_group_text: {
+        fontWeight: "600",
     },
     form_group: {
         display: "center",
         flexDirection: "row",
         alignItems: "center",
-        width: "90%",
+        width: "100%",
         backgroundColor: "#FFF",
         padding: 5,
         borderRadius: 10,
-        margin: 5,
+        marginTop: 5,
+        marginBottom: 10,
+    },
+    form_group_input: {
+        backgroundColor: "#FFF",
+        padding: 6.5,
+        width: "90%",
     },
     icon: {
         padding: 5,
@@ -143,7 +156,7 @@ const styles = StyleSheet.create({
         padding: 12,
         backgroundColor: "#2099FF",
         borderRadius: 10,
-        marginTop: 10,
+        marginTop: 15,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
